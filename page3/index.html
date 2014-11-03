@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="alternate" type="application/atom+xml" href="/feed.xml">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="http://gerardomoad.com/stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="http://gerardomoad.com/stylesheets/overrides.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="http://gerardomoad.com/stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="http://gerardomoad.com/stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Gerardo Moad's blog</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Gerardo Moad's blog</h1>
+        <h2>A software guy's ideas and findings scratchpad...</h2>
+        <a href="https://github.com/sanx" class="button"><small>Follow me on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+            <!-- This loops through the paginated posts -->
+            
+              <h1><a href="/2012/11/20/redirect-to-file-as-sudo.html">Redirect to file as sudo</a></h1>
+              <p class="author">
+                <p class="post-date">20 Nov 2012</p>
+              </p>
+              <div class="content">
+                <p>When you want to run a command as you or as some other regular user (i.e., not a superuser), but you need to redirect the output to a file that is/should be owned by root.</p>
+
+<p>Say I have a script called <code>generate_apache_config</code>, which, given a domain name and a path (representing a site’s webroot), generates an apache <code>.conf</code> file.</p>
+
+<p>Furthermore, say we got this script from someone else, and we’re too lazy to code-review it. In this case, the only sensible way to make use of the script is <strong>not to run it with superuser privileges</strong>.</p>
+
+<p>The following doesn’t work, because our user can’t write a new file to the <code>/etc/apache2/available-sites/</code> directory:</p>
+
+<div class="highlight"><pre><code class="sh"><span class="lineno">1</span>     generate_apache_config DOMAIN_NAME WEBROOT &gt; /etc/apache2/available-sites/DOMAIN_NAME.conf
+<span class="lineno">2</span>     <span class="c">#doesn&#39;t work because our regular user can&#39;t create a file under that directory</span>
+</code></pre></div>
+
+<p>One may think that executing the whole thing as sudo may make this work, but it won’t, because only command <code>generate_apache_config</code> is invoked as sudo. <code>tee</code> is still invoked as our user:</p>
+
+<div class="highlight"><pre><code class="sh"><span class="lineno">1</span>     sudo generate_apache_config DOMAIN_NAME WEBROOT &gt; /etc/apache2/available-sites/DOMAIN_NAME.conf
+<span class="lineno">2</span>     <span class="c">#doesn&#39;t work because redirecting to output file is done as regular user</span>
+</code></pre></div>
+
+<p>Use the <code>tee</code> command instead. Only the <code>tee</code> command is invoked with sudo:</p>
+
+<div class="highlight"><pre><code class="sh"><span class="lineno">1</span>     generate_apache_config DOMAIN_NAME WEBROOT <span class="p">|</span> sudo tee /etc/apache2/available-sites/DOMAIN_NAME.conf
+<span class="lineno">2</span>     <span class="c">#works! we invoke our script with regular user privileges, and then redirect to tee, which we invoke as a super user with sudo</span>
+</code></pre></div>
+
+
+              </div>
+            
+              <h1><a href="/2012/09/15/doing-http-put-requests-in-php-without-using-files.html">Doing HTTP PUT requests in PHP without using files</a></h1>
+              <p class="author">
+                <p class="post-date">15 Sep 2012</p>
+              </p>
+              <div class="content">
+                <p>I think it may be that because back when the <code>curl</code> PHP extension was first created, the <code>HTTP PUT</code> method still wasn’t being used by almost anyone, the <code>API</code> for doing <code>PUTs</code> using PHP curl was implemented in a very strange way.</p>
+
+<p>If you want to <code>PUT</code> some data generated programmatically in a PHP script, you’re supposed to do:</p>
+
+<div class="highlight"><pre><code class="php"><span class="lineno"> 1</span> <span class="x">    </span><span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span>     <span class="nv">$data</span> <span class="o">=</span> <span class="s1">&#39;dynamically generated data that we want to PUT to a webservice endpoint...&#39;</span><span class="p">;</span>
+<span class="lineno"> 3</span>     <span class="c1">// NOTE: you wouldn&#39;t hardcode the filename where you temporarily store your payload, you would</span>
+<span class="lineno"> 4</span>     <span class="c1">//       use tmpfile() or tempname() to come up with a unique temporary file...</span>
+<span class="lineno"> 5</span>     <span class="nb">file_put_contents</span><span class="p">(</span><span class="s1">&#39;/tmp/file.txt&#39;</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span>
+<span class="lineno"> 6</span>     
+<span class="lineno"> 7</span>     <span class="nv">$ch</span> <span class="o">=</span> <span class="nb">curl_init</span><span class="p">();</span>
+<span class="lineno"> 8</span>     <span class="nv">$ch</span> <span class="o">=</span> <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_URL</span><span class="p">,</span> <span class="s2">&quot;http://example.com/endpoint.php&quot;</span><span class="p">);</span>
+<span class="lineno"> 9</span>     <span class="nv">$ch</span> <span class="o">=</span> <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_PUT</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+<span class="lineno">10</span>     <span class="nv">$ch</span> <span class="o">=</span> <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_INFILE</span><span class="p">,</span> <span class="nb">fopen</span><span class="p">(</span><span class="s1">&#39;/tmp/file.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">));</span>
+<span class="lineno">11</span>     <span class="nv">$ch</span> <span class="o">=</span> <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_INFILESIZE</span><span class="p">,</span> <span class="nb">filesize</span><span class="p">(</span><span class="s1">&#39;/tmp/file.txt&#39;</span><span class="p">));</span>
+<span class="lineno">12</span>     <span class="nv">$ch</span> <span class="o">=</span> <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_RETURNTRANSFER</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+<span class="lineno">13</span>     <span class="nv">$curl_ret</span> <span class="o">=</span> <span class="nb">curl_exec</span><span class="p">(</span><span class="nv">$ch</span><span class="p">);</span>
+<span class="lineno">14</span>     <span class="cp">?&gt;</span><span class="x"></span>
+</code></pre></div>
+
+<p>That’s so wrong on many levels. Here I enumerate a few:</p>
+
+<ol>
+  <li>data is written to a file by a script only to be read back in by the same script!</li>
+  <li>an extra OS file <code>stat()</code> call will be made in order to get the size in bytes of the payload file.</li>
+  <li>you can mess things up badly if you don’t use PHP’s built-in <code>tmpfile()</code> or <code>tempname()</code> functions carefully to generate temporary files with unique random names.</li>
+</ol>
+
+<p>Of course, nowadays people very much like the <code>HTTP PUT</code> method again, and there has been a resurgence in its use ever since <code>REST</code> became a trend.</p>
+
+<p>Thankfully, we can make more efficient <code>HTTP POSTs</code> of data generated by our scripts with PHP curl as follows:</p>
+
+<div class="highlight"><pre><code class="php"><span class="lineno"> 1</span> <span class="x">    </span><span class="cp">&lt;?php</span>
+<span class="lineno"> 2</span>     <span class="nv">$data</span> <span class="o">=</span> <span class="s1">&#39;dynamically generated data that we want to PUT to a webservice endpoint...&#39;</span><span class="p">;</span>
+<span class="lineno"> 3</span>     
+<span class="lineno"> 4</span>     <span class="nv">$ch</span> <span class="o">=</span> <span class="nb">curl_init</span><span class="p">();</span>
+<span class="lineno"> 5</span>     <span class="nv">$ch</span> <span class="o">=</span> <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_URL</span><span class="p">,</span> <span class="s1">&#39;http://example.com/endpoint.php&#39;</span><span class="p">);</span>
+<span class="lineno"> 6</span>     <span class="nv">$ch</span> <span class="o">=</span> <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_HTTPHEADER</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;content-type: application/json&#39;</span><span class="p">));</span> <span class="c1">// you may or may not need to do this, depending on what</span>
+<span class="lineno"> 7</span>                                                                                          <span class="c1">// your endpoint expects the posted content-type to be</span>
+<span class="lineno"> 8</span>     <span class="nv">$ch</span> <span class="o">=</span> <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_CUSTOMREQUEST</span><span class="p">,</span> <span class="s1">&#39;PUT&#39;</span><span class="p">);</span>
+<span class="lineno"> 9</span>     <span class="nv">$ch</span> <span class="o">=</span> <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_POSTFIELDS</span><span class="p">,</span> <span class="nv">$data</span><span class="p">);</span> <span class="c1">//you may have to urlencode() your data, but most likely you won&#39;t</span>
+<span class="lineno">10</span>     <span class="nv">$ch</span> <span class="o">=</span> <span class="nb">curl_setopt</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nx">CURLOPT_RETURNTRANSFER</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+<span class="lineno">11</span>     <span class="nv">$curl_ret</span> <span class="o">=</span> <span class="nb">curl_exec</span><span class="p">(</span><span class="nv">$ch</span><span class="p">);</span>
+<span class="lineno">12</span>     <span class="cp">?&gt;</span><span class="x"></span>
+</code></pre></div>
+
+<p>With this approach, we are able to do the same <code>HTTP PUT</code> without incurring in performance penalties associated with excessive use of file <code>stat()</code> operations.</p>
+
+              </div>
+            
+              <h1><a href="/2012/04/12/backup-only-whats-necessary.html">Backup only what's necessary</a></h1>
+              <p class="author">
+                <p class="post-date">12 Apr 2012</p>
+              </p>
+              <div class="content">
+                <p>When backing up a home directory, you don’t want to backup subversion checkout subdirectories that have no changes relative to their repositories (i.e. subversion directories with no local changes).</p>
+
+<p>I made a script which will help you find directories corresponding to svn checkouts that are up-to date relative to their repositories. I saved it as <code>~/bin/get_up_to_date_svn_dirs.pl</code>:</p>
+
+<div class="highlight"><pre><code class="perl"><span class="lineno"> 1</span>     <span class="c1">#!/usr/bin/perl -w</span>
+<span class="lineno"> 2</span>     
+<span class="lineno"> 3</span>     <span class="k">my</span> <span class="nv">@input_list</span> <span class="o">=</span> <span class="p">();</span>
+<span class="lineno"> 4</span>     <span class="k">my</span> <span class="nv">@clean_paths</span> <span class="o">=</span> <span class="p">();</span>
+<span class="lineno"> 5</span>     <span class="k">my</span> <span class="nv">@clean_parents</span> <span class="o">=</span> <span class="p">();</span>
+<span class="lineno"> 6</span>     <span class="k">while</span><span class="p">(</span><span class="o">&lt;&gt;</span><span class="p">)</span> <span class="p">{</span> 
+<span class="lineno"> 7</span>         <span class="nb">push</span> <span class="nv">@input_list</span><span class="p">,</span> <span class="nv">$_</span><span class="p">;</span>
+<span class="lineno"> 8</span>     <span class="p">}</span>
+<span class="lineno"> 9</span>     
+<span class="lineno">10</span>     <span class="k">my</span> <span class="nv">$cmp_path</span> <span class="o">=</span> <span class="s">&quot;cmp_path&quot;</span><span class="p">;</span>
+<span class="lineno">11</span>     
+<span class="lineno">12</span>     <span class="c1"># sorts alphabetically/lexicographically based on the &quot;path&quot; component of the input line.</span>
+<span class="lineno">13</span>     <span class="nv">@input_list</span> <span class="o">=</span> <span class="nv">@clean_parents</span> <span class="o">=</span> <span class="nb">sort</span> <span class="n">cmp_path</span> <span class="nv">@input_list</span><span class="p">;</span>
+<span class="lineno">14</span>     
+<span class="lineno">15</span>     <span class="k">for</span> <span class="k">my</span> <span class="nv">$line</span><span class="p">(</span><span class="nv">@input_list</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">16</span>         <span class="nv">$line</span> <span class="o">=~</span> <span class="sr">m/^\s*(\d+)\s*(.*)\s*$/</span><span class="p">;</span>
+<span class="lineno">17</span>         <span class="k">my</span> <span class="nv">$path</span> <span class="o">=</span> <span class="nv">$2</span><span class="p">;</span>
+<span class="lineno">18</span>         <span class="k">my</span> <span class="nv">$svn_info_out</span> <span class="o">=</span> <span class="sb">`cd $path; svn info &gt; /dev/null 2&gt;/dev/null; echo \$?;`</span><span class="p">;</span>
+<span class="lineno">19</span>         <span class="nb">chomp</span> <span class="nv">$svn_info_out</span><span class="p">;</span>
+<span class="lineno">20</span>         <span class="k">if</span><span class="p">(</span><span class="nv">$svn_info_out</span> <span class="ow">eq</span> <span class="s">&quot;1&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">21</span>             <span class="k">next</span><span class="p">;</span>
+<span class="lineno">22</span>         <span class="p">}</span>
+<span class="lineno">23</span>         <span class="k">my</span> <span class="nv">$svn_status_out</span> <span class="o">=</span> <span class="sb">`cd $path; svn status`</span><span class="p">;</span>
+<span class="lineno">24</span>         <span class="nb">chomp</span> <span class="nv">$svn_status_out</span><span class="p">;</span>
+<span class="lineno">25</span>         <span class="k">if</span><span class="p">(</span><span class="nv">$svn_status_out</span> <span class="ow">eq</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">26</span>             <span class="k">if</span><span class="p">(</span><span class="nb">scalar</span><span class="p">(</span><span class="nv">@clean_paths</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">27</span>                 <span class="k">my</span> <span class="nv">$prev_clean_path</span> <span class="o">=</span> <span class="nv">$clean_paths</span><span class="p">[</span><span class="nb">scalar</span><span class="p">(</span><span class="nv">@clean_paths</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+<span class="lineno">28</span>                 <span class="k">if</span><span class="p">(</span><span class="nv">$path</span> <span class="o">=~</span> <span class="sr">m/^.*$prev_clean_path.*$/</span><span class="p">)</span> <span class="p">{</span>
+<span class="lineno">29</span>                     <span class="k">next</span><span class="p">;</span>
+<span class="lineno">30</span>                 <span class="p">}</span>
+<span class="lineno">31</span>             <span class="p">}</span>
+<span class="lineno">32</span>             <span class="nb">push</span> <span class="nv">@clean_paths</span><span class="p">,</span> <span class="nv">$path</span><span class="p">;</span>
+<span class="lineno">33</span>             <span class="k">print</span> <span class="s">&quot;$path\n&quot;</span><span class="p">;</span>
+<span class="lineno">34</span>         <span class="p">}</span>
+<span class="lineno">35</span>     <span class="p">}</span>
+<span class="lineno">36</span>     
+<span class="lineno">37</span>     <span class="c1"># comparison function takes 2 lines having the following format:</span>
+<span class="lineno">38</span>     <span class="c1"># 1024    /tmp/a/file.txt</span>
+<span class="lineno">39</span>     <span class="c1"># and returns the result of alphabetically comparing the second part of the line</span>
+<span class="lineno">40</span>     <span class="c1"># (e.g. /tmp/a/file.txt)</span>
+<span class="lineno">41</span>     <span class="k">sub </span><span class="nf">cmp_path</span> <span class="p">{</span>
+<span class="lineno">42</span>         <span class="nv">$a</span> <span class="o">=~</span> <span class="sr">m/^\s*(\d+)\s*(.*)\s*$/</span><span class="p">;</span>
+<span class="lineno">43</span>         <span class="k">my</span> <span class="nv">$path_a</span> <span class="o">=</span> <span class="nv">$2</span><span class="p">;</span>
+<span class="lineno">44</span>         <span class="nv">$b</span> <span class="o">=~</span> <span class="sr">m/^\s*(\d+)\s*(.*)\s*$/</span><span class="p">;</span>
+<span class="lineno">45</span>         <span class="k">my</span> <span class="nv">$path_b</span> <span class="o">=</span> <span class="nv">$2</span><span class="p">;</span>
+<span class="lineno">46</span>         <span class="k">return</span> <span class="nv">$path_a</span> <span class="ow">cmp</span> <span class="nv">$path_b</span><span class="p">;</span>
+<span class="lineno">47</span>     <span class="p">}</span>
+</code></pre></div>
+
+<p>First, I run <code>du</code>, and <code>sort</code> it numerically to get an idea of how big the home directory that I want to back up is, and save the output to file <code>user-du.txt</code> under my own home directory:</p>
+
+<div class="highlight"><pre><code class="perl"><span class="lineno">1</span>     <span class="n">du</span> <span class="o">~</span><span class="n">user</span><span class="sr">/ | sort -n | tee ~/</span><span class="n">user</span><span class="o">-</span><span class="n">du</span><span class="o">.</span><span class="n">txt</span>
+</code></pre></div>
+
+<p>Now, I’ll feed this <code>du</code> output to my script, which will generate a list of paths in the input file that correspond to svn checkout directories that are up to date relative to their repositories. I save this list in file <code>~/tmp/user-all-clean.txt</code>:</p>
+
+<div class="highlight"><pre><code class="perl"><span class="lineno">1</span>     <span class="n">cat</span> <span class="o">~</span><span class="sr">/user-du.txt | ~/</span><span class="n">bin</span><span class="sr">/get_up_to_date_svn_dirs.pl | tee ~/</span><span class="n">tmp</span><span class="o">/</span><span class="n">user</span><span class="o">-</span><span class="n">all</span><span class="o">-</span><span class="n">clean</span><span class="o">.</span><span class="n">txt</span>
+</code></pre></div>
+
+<p>At this point, I know:</p>
+
+<ul>
+  <li>the base directory that I want to back up (e.g. the home directory of a user that I want to back up, like <code>~user/</code>).</li>
+  <li>a list of paths that it’s not necessary to back up because they’re subversion checkouts with no local changes.</li>
+</ul>
+
+<p>I can use <code>tar</code>, using the <code>--exclude-from</code> option to finally backup what I want in gzipped tarball file <code>~/user-home.tgz</code></p>
+
+<div class="highlight"><pre><code class="perl"><span class="lineno">1</span>     <span class="n">tar</span> <span class="o">--</span><span class="n">exclude</span><span class="o">-</span><span class="n">from</span> <span class="o">~</span><span class="sr">/tmp/</span><span class="n">user</span><span class="o">-</span><span class="n">all</span><span class="o">-</span><span class="n">clean</span><span class="o">.</span><span class="n">txt</span> <span class="o">-</span><span class="n">zcvf</span> <span class="o">~</span><span class="sr">/user-home.tgz ~user/</span>
+</code></pre></div>
+
+<p>@TODO (exercise for the reader): Have <code>~/bin/get_up_to_date_svn_dirs.pl</code> output the svn <em>repository paths</em> and <em>revision numbers</em> that we’re skipping to get the full information that would allow us to restore the backup precisely by restoring not only the tarball but also checking out the right <em>paths</em> and <em>revisions</em> from subversion.</p>
+
+              </div>
+            
+
+            <!-- Pagination links -->
+            
+            <div class="pagination">
+              
+                <a href="/page2">&laquo; Prev</a>
+              
+
+              
+                
+                  <a href="/index.html">1</a>
+                
+              
+                
+                  <a href="/page2">2</a>
+                
+              
+                
+                  <em>3</em>
+                
+              
+
+              
+                <span>Next &raquo;</span>
+              
+            </div>
+            
+        </section>
+
+        <aside id="sidebar">
+
+
+                    <p>This page was initially generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>, then it was converted into a templated Jekyll blog by <a href="https://github.com/sanx">Gerardo Moad</a> (see <a href="https://github.com/sanx/sanx.github.io">repo</a>).</p>
+
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
