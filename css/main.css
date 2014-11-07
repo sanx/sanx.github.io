@@ -217,7 +217,7 @@ body > header > div > dl {
     margin-top: -70px;
     white-space: normal;
     text-align: left;
-    background-color: none;
+    background-color: initial;
   }
 }
 /* line 111, ../../sass/main.scss */
