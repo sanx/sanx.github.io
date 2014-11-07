@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="alternate" type="application/atom+xml" href="/rss.xml">
+    <link href='/css/main.css' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/css/highlight-js.default.min.css">
+    <!-- link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css' -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/stylesheet.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/overrides.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/pygment_trac.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/print.css" media="print" / -->
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Redirect to file as sudo - Gerardo&#39;s musings</title>
+  </head>
+
+  <body>
+    <header>
+        
+      <div>
+        <h1><a href="/">Gerardo&#39;s musings</a></h1>
+        <h2>(not) just another blog, hopefully, this time around</h2>
+        <dl>
+            <dt>On Github</dt>
+            <dd><a href="https://github.com/sanx">github.com/sanx</a></dd>
+            <dt>On LinkedIn</dt>
+            <dd><a href="https://www.linkedin.com/pub/gerardo-moad/3/501/b27">linkedin.com/pub/gerardo-moad</a></dd>
+            <dt>On Twitter</dt>
+            <dd><a href="https://twitter.com/sanx">twitter.com/sanx</a></dd>
+        </dl>
+      </div>
+
+    </header>
+
+    <main id="main-start">
+      <section class="post">
+        <article>
+            <h2><a href="/posts/redirect-to-file-as-sudo/index.html">Redirect to file as sudo</a></h1>
+            <p class="post-date">(2012-11-20)</p>
+            <div>
+                <p>When you want to run a command as you or as some other regular user (i.e., not a superuser), but you need to redirect the output to a file that is/should be owned by root.</p>
+<p>Say I have a script called <code>generate_apache_config</code>, which, given a domain name and a path (representing a site&#39;s webroot), generates an apache <code>.conf</code> file.</p>
+<p>Furthermore, say we got this script from someone else, and we&#39;re too lazy to code-review it. In this case, the only sensible way to make use of the script is <strong>not to run it with superuser privileges</strong>.</p>
+<p>The following doesn&#39;t work, because our user can&#39;t write a new file to the <code>/etc/apache2/available-sites/</code> directory:</p>
+<pre><code class="hljs bash">generate_apache_config DOMAIN_NAME WEBROOT &gt; /etc/apache2/available-sites/DOMAIN_NAME.conf
+    <span class="hljs-comment">#doesn't work because our regular user can't create a file under that directory</span></code></pre>
+
+<p>One may think that executing the whole thing as sudo may make this work, but it won&#39;t, because only command <code>generate_apache_config</code> is invoked as sudo. <code>tee</code> is still invoked as our user:</p>
+<pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> generate_apache_config DOMAIN_NAME WEBROOT &gt; /etc/apache2/available-sites/DOMAIN_NAME.conf
+    <span class="hljs-comment">#doesn't work because redirecting to output file is done as regular user</span></code></pre>
+
+<p>Use the <code>tee</code> command instead. Only the <code>tee</code> command is invoked with sudo:</p>
+<pre><code class="hljs bash">generate_apache_config DOMAIN_NAME WEBROOT | <span class="hljs-built_in">sudo</span> tee /etc/apache2/available-sites/DOMAIN_NAME.conf
+    <span class="hljs-comment">#works! we invoke our script with regular user privileges, and then redirect to tee, which we invoke as a super user with sudo</span></code></pre>
+            </div>
+        </article>
+
+      </section>
+    </main>
+    <footer>
+
+    <p>This is <a href="https://github.com/sanx">Gerardo Moad</a>'s blog. A blog generated using a <a href="http://metalsmith.io">Metalsmith.io</a> workflow. The blog source lives <a href="https://github.com/sanx/sanx-blog-source">here</a>, and the static files that github serves are <a href="https://github.com/sanx/sanx.github.io">here</a>. I made the site style from scratch using the excellent <a href="http://sass-lang.com">Sass</a>, with <a href="http://susy.oddbird.net/">Susy</a>.</p>
+
+
+    </footer>
+  </body>
+</html>

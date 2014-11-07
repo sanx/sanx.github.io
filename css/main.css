@@ -1,0 +1,245 @@
+/* line 5, ../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+/* line 22, ../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+html {
+  line-height: 1;
+}
+
+/* line 24, ../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 26, ../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 28, ../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 30, ../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+q, blockquote {
+  quotes: none;
+}
+/* line 103, ../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+/* line 32, ../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+a img {
+  border: none;
+}
+
+/* line 116, ../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
+  display: block;
+}
+
+/* line 10, ../../sass/main.scss */
+a {
+  text-decoration: none;
+}
+/* line 12, ../../sass/main.scss */
+a:hover {
+  text-decoration: underline;
+}
+
+/* line 16, ../../sass/main.scss */
+body {
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  font-family: "Trebuchet MS", "Tahoma", "Verdana", "Georgia";
+  overflow-x: hidden;
+}
+/* line 12, ../../../../../Library/Ruby/Gems/2.0.0/gems/susy-2.1.3/sass/susy/output/support/_clearfix.scss */
+body:after {
+  content: " ";
+  display: block;
+  clear: both;
+}
+@media (min-width: 960px) {
+  /* line 16, ../../sass/main.scss */
+  body {
+    max-width: 960px;
+  }
+}
+/* line 24, ../../sass/main.scss */
+body > header a {
+  color: #414141;
+}
+/* line 27, ../../sass/main.scss */
+body > header {
+  color: #222;
+  background-color: #2D882D;
+  background-image: url("../img/backgrounds/pajarito_picando_playa_halfmoonbay.JPG");
+  background-position: center;
+  margin-left: -600px;
+  margin-right: -600px;
+  height: 600px;
+  overflow: hidden;
+  *zoom: 1;
+}
+/* line 37, ../../sass/main.scss */
+body > header > div {
+  max-width: 960px;
+  padding-left: 50%;
+  padding-right: 25%;
+  margin-left: -480px;
+  background-color: rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  *zoom: 1;
+}
+/* line 45, ../../sass/main.scss */
+body > header > div > h1, body > header > div > h2 {
+  width: 55.31915%;
+  float: left;
+  margin-right: 2.12766%;
+}
+/* line 48, ../../sass/main.scss */
+body > header > div > h1 {
+  height: 70px;
+  line-height: 70px;
+  font-size: 56px;
+  vertical-align: middle;
+}
+/* line 55, ../../sass/main.scss */
+body > header > div > h1::before {
+  display: inline-block;
+  background-image: url("../img/yo-400x400.jpeg");
+  background-size: 56px 56px;
+  border-radius: 50%;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #CCC;
+  width: 56px;
+  height: 56px;
+  content: " ";
+  margin-right: 10px;
+  margin-bottom: 10.5px;
+  vertical-align: middle;
+}
+/* line 71, ../../sass/main.scss */
+body > header > div > h2 {
+  line-height: 30px;
+}
+/* line 74, ../../sass/main.scss */
+body > header > div > dl {
+  width: 42.55319%;
+  float: right;
+  margin-right: 0;
+  margin-top: -70px;
+}
+/* line 77, ../../sass/main.scss */
+body > header > div > dl > dt {
+  width: 23.52941%;
+  float: left;
+  margin-right: 5.88235%;
+  clear: both;
+}
+/* line 79, ../../sass/main.scss */
+body > header > div > dl > dt:after {
+  content: ":";
+}
+/* line 84, ../../sass/main.scss */
+body > header > div > dl > dd {
+  width: 70.58824%;
+  float: right;
+  margin-right: 0;
+}
+/* line 91, ../../sass/main.scss */
+body > main h1, body > main h2, body > main h3, body > main h4, body > main h5, body > main p, body > main ul, body > main li, body > main div, body > footer h1, body > footer h2, body > footer h3, body > footer h4, body > footer h5, body > footer p, body > footer ul, body > footer li, body > footer div {
+  margin: 1em 10px;
+  line-height: 1.3em;
+}
+/* line 95, ../../sass/main.scss */
+body > main article > h2, body > footer article > h2 {
+  font-size: 1.5em !important;
+}
+/* line 99, ../../sass/main.scss */
+body > main {
+  width: 70.58824%;
+  float: left;
+  margin-right: 5.88235%;
+  margin-top: 5.26316%;
+}
+/* line 103, ../../sass/main.scss */
+body > footer {
+  width: 23.52941%;
+  float: right;
+  margin-right: 0;
+  margin-top: 5.26316%;
+}
+
+/* line 109, ../../sass/main.scss */
+ul.posts > li {
+  border-top: 1px solid #A1A1A1;
+  margin-bottom: 5.26316%;
+}
+/* line 110, ../../sass/main.scss */
+ul.posts > li:first-of-type {
+  border-top: 0px none white;
+}
+
+/* line 118, ../../sass/main.scss */
+section.post h1 {
+  font-size: 1.5em;
+}
+/* line 121, ../../sass/main.scss */
+section.post h2 {
+  font-size: 1.2em;
+}
+/* line 124, ../../sass/main.scss */
+section.post ul {
+  list-style-type: disc;
+}
+/* line 127, ../../sass/main.scss */
+section.post ol {
+  list-style-type: decimal;
+}
+
+/* line 132, ../../sass/main.scss */
+.hljs, pre > code {
+  margin-left: -600px;
+  margin-right: -600px;
+  padding-left: 600px !important;
+}
+
+/* line 137, ../../sass/main.scss */
+code {
+  font-family: courier, monospace;
+}
+
+/* line 140, ../../sass/main.scss */
+pre > code {
+  display: block;
+  background: none repeat scroll 0% 0% #F0F0F0;
+}

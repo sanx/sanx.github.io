@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="alternate" type="application/atom+xml" href="/rss.xml">
+    <link href='/css/main.css' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/css/highlight-js.default.min.css">
+    <!-- link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css' -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/stylesheet.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/overrides.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/pygment_trac.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/print.css" media="print" / -->
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Doing HTTP PUT requests in PHP without using files - Gerardo&#39;s musings</title>
+  </head>
+
+  <body>
+    <header>
+        
+      <div>
+        <h1><a href="/">Gerardo&#39;s musings</a></h1>
+        <h2>(not) just another blog, hopefully, this time around</h2>
+        <dl>
+            <dt>On Github</dt>
+            <dd><a href="https://github.com/sanx">github.com/sanx</a></dd>
+            <dt>On LinkedIn</dt>
+            <dd><a href="https://www.linkedin.com/pub/gerardo-moad/3/501/b27">linkedin.com/pub/gerardo-moad</a></dd>
+            <dt>On Twitter</dt>
+            <dd><a href="https://twitter.com/sanx">twitter.com/sanx</a></dd>
+        </dl>
+      </div>
+
+    </header>
+
+    <main id="main-start">
+      <section class="post">
+        <article>
+            <h2><a href="/posts/doing-http-put-requests-in-php-without-using-files/index.html">Doing HTTP PUT requests in PHP without using files</a></h1>
+            <p class="post-date">(2012-09-15)</p>
+            <div>
+                <p>I think it may be that because back when the <code>curl</code> PHP extension was first created, the <code>HTTP PUT</code> method still wasn&#39;t being used by almost anyone, the <code>API</code> for doing <code>PUTs</code> using PHP curl was implemented in a very strange way.</p>
+<p>If you want to <code>PUT</code> some data generated programmatically in a PHP script, you&#39;re supposed to do:</p>
+<pre><code class="hljs php"><span class="hljs-preprocessor">&lt;?php</span>
+    <span class="hljs-variable">$data</span> = <span class="hljs-string">'dynamically generated data that we want to PUT to a webservice endpoint...'</span>;
+    <span class="hljs-comment">// NOTE: you wouldn't hardcode the filename where you temporarily store your payload, you would</span>
+    <span class="hljs-comment">//       use tmpfile() or tempname() to come up with a unique temporary file...</span>
+    file_put_contents(<span class="hljs-string">'/tmp/file.txt'</span>, <span class="hljs-variable">$data</span>);
+
+    <span class="hljs-variable">$ch</span> = curl_init();
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_URL, <span class="hljs-string">"http://example.com/endpoint.php"</span>);
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_PUT, <span class="hljs-keyword">true</span>);
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_INFILE, fopen(<span class="hljs-string">'/tmp/file.txt'</span>, <span class="hljs-string">'r'</span>));
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_INFILESIZE, filesize(<span class="hljs-string">'/tmp/file.txt'</span>));
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_RETURNTRANSFER, <span class="hljs-keyword">true</span>);
+    <span class="hljs-variable">$curl_ret</span> = curl_exec(<span class="hljs-variable">$ch</span>);
+    <span class="hljs-preprocessor">?&gt;</span></code></pre>
+
+<p>That&#39;s so wrong on many levels. Here I enumerate a few:</p>
+<ol>
+<li>data is written to a file by a script only to be read back in by the same script!</li>
+<li>an extra OS file <code>stat()</code> call will be made in order to get the size in bytes of the payload file.</li>
+<li>you can mess things up badly if you don&#39;t use PHP&#39;s built-in <code>tmpfile()</code> or <code>tempname()</code> functions carefully to generate temporary files with unique random names.</li>
+</ol>
+<p>Of course, nowadays people very much like the <code>HTTP PUT</code> method again, and there has been a resurgence in its use ever since <code>REST</code> became a trend.</p>
+<p>Thankfully, we can make more efficient <code>HTTP POSTs</code> of data generated by our scripts with PHP curl as follows:</p>
+<pre><code class="hljs php"><span class="hljs-preprocessor">&lt;?php</span>
+    <span class="hljs-variable">$data</span> = <span class="hljs-string">'dynamically generated data that we want to PUT to a webservice endpoint...'</span>;
+
+    <span class="hljs-variable">$ch</span> = curl_init();
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_URL, <span class="hljs-string">'http://example.com/endpoint.php'</span>);
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_HTTPHEADER, <span class="hljs-keyword">array</span>(<span class="hljs-string">'content-type: application/json'</span>)); <span class="hljs-comment">// you may or may not need to do this, depending on what</span>
+                                                                                         <span class="hljs-comment">// your endpoint expects the posted content-type to be</span>
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_CUSTOMREQUEST, <span class="hljs-string">'PUT'</span>);
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_POSTFIELDS, <span class="hljs-variable">$data</span>); <span class="hljs-comment">//you may have to urlencode() your data, but most likely you won't</span>
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_RETURNTRANSFER, <span class="hljs-keyword">true</span>);
+    <span class="hljs-variable">$curl_ret</span> = curl_exec(<span class="hljs-variable">$ch</span>);
+    <span class="hljs-preprocessor">?&gt;</span></code></pre>
+
+<p>With this approach, we are able to do the same <code>HTTP PUT</code> without incurring in performance penalties associated with excessive use of file <code>stat()</code> operations.</p>
+
+            </div>
+        </article>
+
+      </section>
+    </main>
+    <footer>
+
+    <p>This is <a href="https://github.com/sanx">Gerardo Moad</a>'s blog. A blog generated using a <a href="http://metalsmith.io">Metalsmith.io</a> workflow. The blog source lives <a href="https://github.com/sanx/sanx-blog-source">here</a>, and the static files that github serves are <a href="https://github.com/sanx/sanx.github.io">here</a>. I made the site style from scratch using the excellent <a href="http://sass-lang.com">Sass</a>, with <a href="http://susy.oddbird.net/">Susy</a>.</p>
+
+
+    </footer>
+  </body>
+</html>

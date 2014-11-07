@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="alternate" type="application/atom+xml" href="/rss.xml">
+    <link href='/css/main.css' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/css/highlight-js.default.min.css">
+    <!-- link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css' -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/stylesheet.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/overrides.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/pygment_trac.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/print.css" media="print" / -->
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Backup only what&#39;s necessary - Gerardo&#39;s musings</title>
+  </head>
+
+  <body>
+    <header>
+        
+      <div>
+        <h1><a href="/">Gerardo&#39;s musings</a></h1>
+        <h2>(not) just another blog, hopefully, this time around</h2>
+        <dl>
+            <dt>On Github</dt>
+            <dd><a href="https://github.com/sanx">github.com/sanx</a></dd>
+            <dt>On LinkedIn</dt>
+            <dd><a href="https://www.linkedin.com/pub/gerardo-moad/3/501/b27">linkedin.com/pub/gerardo-moad</a></dd>
+            <dt>On Twitter</dt>
+            <dd><a href="https://twitter.com/sanx">twitter.com/sanx</a></dd>
+        </dl>
+      </div>
+
+    </header>
+
+    <main id="main-start">
+      <section class="post">
+        <article>
+            <h2><a href="/posts/backup-only-what-s-necessary/index.html">Backup only what&#39;s necessary</a></h1>
+            <p class="post-date">(2012-04-12)</p>
+            <div>
+                <p>When backing up a home directory, you don&#39;t want to backup subversion checkout subdirectories that have no changes relative to their repositories (i.e. subversion directories with no local changes).</p>
+<p>I made a script which will help you find directories corresponding to svn checkouts that are up-to date relative to their repositories. I saved it as <code>~/bin/get_up_to_date_svn_dirs.pl</code>:</p>
+<pre><code class="hljs perl"><span class="hljs-comment">#!/usr/bin/perl -w</span>
+
+    <span class="hljs-keyword">my</span> <span class="hljs-variable">@input_list</span> = ();
+    <span class="hljs-keyword">my</span> <span class="hljs-variable">@clean_paths</span> = ();
+    <span class="hljs-keyword">my</span> <span class="hljs-variable">@clean_parents</span> = ();
+    <span class="hljs-keyword">while</span>(&lt;&gt;) { 
+        <span class="hljs-keyword">push</span> <span class="hljs-variable">@input_list</span>, <span class="hljs-variable">$_</span>;
+    }
+
+    <span class="hljs-keyword">my</span> <span class="hljs-variable">$cmp_path</span> = <span class="hljs-string">"cmp_path"</span>;
+
+    <span class="hljs-comment"># sorts alphabetically/lexicographically based on the "path" component of the input line.</span>
+    <span class="hljs-variable">@input_list</span> = <span class="hljs-variable">@clean_parents</span> = <span class="hljs-keyword">sort</span> cmp_path <span class="hljs-variable">@input_list</span>;
+
+    <span class="hljs-keyword">for</span> <span class="hljs-keyword">my</span> <span class="hljs-variable">$line</span>(<span class="hljs-variable">@input_list</span>) {
+        <span class="hljs-variable">$line</span> =~ <span class="hljs-regexp">m/^\s*(\d+)\s*(.*)\s*$/</span>;
+        <span class="hljs-keyword">my</span> <span class="hljs-variable">$path</span> = <span class="hljs-variable">$2</span>;
+        <span class="hljs-keyword">my</span> <span class="hljs-variable">$svn_info_out</span> = <span class="hljs-string">`cd $path; svn info &gt; /dev/null 2&gt;/dev/null; echo \$?;`</span>;
+        <span class="hljs-keyword">chomp</span> <span class="hljs-variable">$svn_info_out</span>;
+        <span class="hljs-keyword">if</span>(<span class="hljs-variable">$svn_info_out</span> eq <span class="hljs-string">"1"</span>) {
+            <span class="hljs-keyword">next</span>;
+        }
+        <span class="hljs-keyword">my</span> <span class="hljs-variable">$svn_status_out</span> = <span class="hljs-string">`cd $path; svn status`</span>;
+        <span class="hljs-keyword">chomp</span> <span class="hljs-variable">$svn_status_out</span>;
+        <span class="hljs-keyword">if</span>(<span class="hljs-variable">$svn_status_out</span> eq <span class="hljs-string">""</span>) {
+            <span class="hljs-keyword">if</span>(<span class="hljs-keyword">scalar</span>(<span class="hljs-variable">@clean_paths</span>) != <span class="hljs-number">0</span>) {
+                <span class="hljs-keyword">my</span> <span class="hljs-variable">$prev_clean_path</span> = <span class="hljs-variable">$clean_paths</span>[<span class="hljs-keyword">scalar</span>(<span class="hljs-variable">@clean_paths</span>) - <span class="hljs-number">1</span>];
+                <span class="hljs-keyword">if</span>(<span class="hljs-variable">$path</span> =~ <span class="hljs-regexp">m/^.*$prev_clean_path.*$/</span>) {
+                    <span class="hljs-keyword">next</span>;
+                }
+            }
+            <span class="hljs-keyword">push</span> <span class="hljs-variable">@clean_paths</span>, <span class="hljs-variable">$path</span>;
+            <span class="hljs-keyword">print</span> <span class="hljs-string">"<span class="hljs-variable">$path</span>\n"</span>;
+        }
+    }
+
+    <span class="hljs-comment"># comparison function takes 2 lines having the following format:</span>
+    <span class="hljs-comment"># 1024    /tmp/a/file.txt</span>
+    <span class="hljs-comment"># and returns the result of alphabetically comparing the second part of the line</span>
+    <span class="hljs-comment"># (e.g. /tmp/a/file.txt)</span>
+    <span class="hljs-sub"><span class="hljs-keyword">sub</span> cmp_path {</span>
+        <span class="hljs-variable">$a</span> =~ <span class="hljs-regexp">m/^\s*(\d+)\s*(.*)\s*$/</span>;
+        <span class="hljs-keyword">my</span> <span class="hljs-variable">$path_a</span> = <span class="hljs-variable">$2</span>;
+        <span class="hljs-variable">$b</span> =~ <span class="hljs-regexp">m/^\s*(\d+)\s*(.*)\s*$/</span>;
+        <span class="hljs-keyword">my</span> <span class="hljs-variable">$path_b</span> = <span class="hljs-variable">$2</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-variable">$path_a</span> cmp <span class="hljs-variable">$path_b</span>;
+    }</code></pre>
+
+
+<p>First, I run <code>du</code>, and <code>sort</code> it numerically to get an idea of how big the home directory that I want to back up is, and save the output to file <code>user-du.txt</code> under my own home directory:</p>
+<pre><code class="hljs perl">du ~user/ | <span class="hljs-keyword">sort</span> -n | tee ~<span class="hljs-regexp">/user-du.txt</span></code></pre>
+
+<p>Now, I&#39;ll feed this <code>du</code> output to my script, which will generate a list of paths in the input file that correspond to svn checkout directories that are up to date relative to their repositories. I save this list in file <code>~/tmp/user-all-clean.txt</code>:</p>
+<pre><code class="hljs perl">cat ~<span class="hljs-regexp">/user-du.txt | ~/bin</span><span class="hljs-regexp">/get_up_to_date_svn_dirs.pl | tee ~/tmp</span><span class="hljs-regexp">/user-all-clean.txt</span></code></pre>
+
+<p>At this point, I know:</p>
+<ul>
+<li>the base directory that I want to back up (e.g. the home directory of a user that I want to back up, like <code>~user/</code>).</li>
+<li>a list of paths that it&#39;s not necessary to back up because they&#39;re subversion checkouts with no local changes.</li>
+</ul>
+<p>I can use <code>tar</code>, using the <code>--exclude-from</code> option to finally backup what I want in gzipped tarball file <code>~/user-home.tgz</code></p>
+<pre><code class="hljs perl">tar --exclude-from ~<span class="hljs-regexp">/tmp/user</span>-all-clean.txt -zcvf ~<span class="hljs-regexp">/user-home.tgz ~user/</span></code></pre>
+
+<p>@TODO (exercise for the reader): Have <code>~/bin/get_up_to_date_svn_dirs.pl</code> output the svn <em>repository paths</em> and <em>revision numbers</em> that we&#39;re skipping to get the full information that would allow us to restore the backup precisely by restoring not only the tarball but also checking out the right <em>paths</em> and <em>revisions</em> from subversion.</p>
+
+            </div>
+        </article>
+
+      </section>
+    </main>
+    <footer>
+
+    <p>This is <a href="https://github.com/sanx">Gerardo Moad</a>'s blog. A blog generated using a <a href="http://metalsmith.io">Metalsmith.io</a> workflow. The blog source lives <a href="https://github.com/sanx/sanx-blog-source">here</a>, and the static files that github serves are <a href="https://github.com/sanx/sanx.github.io">here</a>. I made the site style from scratch using the excellent <a href="http://sass-lang.com">Sass</a>, with <a href="http://susy.oddbird.net/">Susy</a>.</p>
+
+
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="alternate" type="application/atom+xml" href="/rss.xml">
+    <link href='/css/main.css' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/css/highlight-js.default.min.css">
+    <!-- link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css' -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/stylesheet.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/overrides.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/pygment_trac.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/print.css" media="print" / -->
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Gerardo&#39;s musings</title>
+  </head>
+
+  <body>
+    <header>
+        
+      <div>
+        <h1><a href="/">Gerardo&#39;s musings</a></h1>
+        <h2>(not) just another blog, hopefully, this time around</h2>
+        <dl>
+            <dt>On Github</dt>
+            <dd><a href="https://github.com/sanx">github.com/sanx</a></dd>
+            <dt>On LinkedIn</dt>
+            <dd><a href="https://www.linkedin.com/pub/gerardo-moad/3/501/b27">linkedin.com/pub/gerardo-moad</a></dd>
+            <dt>On Twitter</dt>
+            <dd><a href="https://twitter.com/sanx">twitter.com/sanx</a></dd>
+        </dl>
+      </div>
+
+    </header>
+
+    <main>
+        <ul class="posts">
+            <!-- This loops through the paginated posts -->
+            
+                <li>
+                    <section class="post">
+                        <article>
+                            <h2><a href="/posts/redirect-to-file-as-sudo/index.html#main-start">Redirect to file as sudo</a></h2>
+                            <div>
+                                <p>When you want to run a command as you or as some other regular user (i.e., not a superuser), but you need to redirect the output to a file that is/should be owned by root.</p>
+<p>Say I have a script called <code>generate_apache_config</code>, which, given a domain name and a path (representing a site&#39;s webroot), generates an apache <code>.conf</code> file.</p>
+<p>Furthermore, say we got this script from someone else, and we&#39;re too lazy to code-review it. In this case, the only sensible way to make use of the script is <strong>not to run it with superuser privileges</strong>.</p>
+<p>The following doesn&#39;t work, because our user can&#39;t write a new file to the <code>/etc/apache2/available-sites/</code> directory:</p>
+<pre><code class="hljs bash">generate_apache_config DOMAIN_NAME WEBROOT &gt; /etc/apache2/available-sites/DOMAIN_NAME.conf
+    <span class="hljs-comment">#doesn't work because our regular user can't create a file under that directory</span></code></pre>
+
+<p>One may think that executing the whole thing as sudo may make this work, but it won&#39;t, because only command <code>generate_apache_config</code> is invoked as sudo. <code>tee</code> is still invoked as our user:</p>
+<pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> generate_apache_config DOMAIN_NAME WEBROOT &gt; /etc/apache2/available-sites/DOMAIN_NAME.conf
+    <span class="hljs-comment">#doesn't work because redirecting to output file is done as regular user</span></code></pre>
+
+<p>Use the <code>tee</code> command instead. Only the <code>tee</code> command is invoked with sudo:</p>
+<pre><code class="hljs bash">generate_apache_config DOMAIN_NAME WEBROOT | <span class="hljs-built_in">sudo</span> tee /etc/apache2/available-sites/DOMAIN_NAME.conf
+    <span class="hljs-comment">#works! we invoke our script with regular user privileges, and then redirect to tee, which we invoke as a super user with sudo</span></code></pre>
+                            </div>
+                        </article>
+                    </section>
+                </li>
+            
+                <li>
+                    <section class="post">
+                        <article>
+                            <h2><a href="/posts/doing-http-put-requests-in-php-without-using-files/index.html#main-start">Doing HTTP PUT requests in PHP without using files</a></h2>
+                            <div>
+                                <p>I think it may be that because back when the <code>curl</code> PHP extension was first created, the <code>HTTP PUT</code> method still wasn&#39;t being used by almost anyone, the <code>API</code> for doing <code>PUTs</code> using PHP curl was implemented in a very strange way.</p>
+<p>If you want to <code>PUT</code> some data generated programmatically in a PHP script, you&#39;re supposed to do:</p>
+<pre><code class="hljs php"><span class="hljs-preprocessor">&lt;?php</span>
+    <span class="hljs-variable">$data</span> = <span class="hljs-string">'dynamically generated data that we want to PUT to a webservice endpoint...'</span>;
+    <span class="hljs-comment">// NOTE: you wouldn't hardcode the filename where you temporarily store your payload, you would</span>
+    <span class="hljs-comment">//       use tmpfile() or tempname() to come up with a unique temporary file...</span>
+    file_put_contents(<span class="hljs-string">'/tmp/file.txt'</span>, <span class="hljs-variable">$data</span>);
+
+    <span class="hljs-variable">$ch</span> = curl_init();
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_URL, <span class="hljs-string">"http://example.com/endpoint.php"</span>);
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_PUT, <span class="hljs-keyword">true</span>);
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_INFILE, fopen(<span class="hljs-string">'/tmp/file.txt'</span>, <span class="hljs-string">'r'</span>));
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_INFILESIZE, filesize(<span class="hljs-string">'/tmp/file.txt'</span>));
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_RETURNTRANSFER, <span class="hljs-keyword">true</span>);
+    <span class="hljs-variable">$curl_ret</span> = curl_exec(<span class="hljs-variable">$ch</span>);
+    <span class="hljs-preprocessor">?&gt;</span></code></pre>
+
+<p>That&#39;s so wrong on many levels. Here I enumerate a few:</p>
+<ol>
+<li>data is written to a file by a script only to be read back in by the same script!</li>
+<li>an extra OS file <code>stat()</code> call will be made in order to get the size in bytes of the payload file.</li>
+<li>you can mess things up badly if you don&#39;t use PHP&#39;s built-in <code>tmpfile()</code> or <code>tempname()</code> functions carefully to generate temporary files with unique random names.</li>
+</ol>
+<p>Of course, nowadays people very much like the <code>HTTP PUT</code> method again, and there has been a resurgence in its use ever since <code>REST</code> became a trend.</p>
+<p>Thankfully, we can make more efficient <code>HTTP POSTs</code> of data generated by our scripts with PHP curl as follows:</p>
+<pre><code class="hljs php"><span class="hljs-preprocessor">&lt;?php</span>
+    <span class="hljs-variable">$data</span> = <span class="hljs-string">'dynamically generated data that we want to PUT to a webservice endpoint...'</span>;
+
+    <span class="hljs-variable">$ch</span> = curl_init();
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_URL, <span class="hljs-string">'http://example.com/endpoint.php'</span>);
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_HTTPHEADER, <span class="hljs-keyword">array</span>(<span class="hljs-string">'content-type: application/json'</span>)); <span class="hljs-comment">// you may or may not need to do this, depending on what</span>
+                                                                                         <span class="hljs-comment">// your endpoint expects the posted content-type to be</span>
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_CUSTOMREQUEST, <span class="hljs-string">'PUT'</span>);
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_POSTFIELDS, <span class="hljs-variable">$data</span>); <span class="hljs-comment">//you may have to urlencode() your data, but most likely you won't</span>
+    <span class="hljs-variable">$ch</span> = curl_setopt(<span class="hljs-variable">$ch</span>, CURLOPT_RETURNTRANSFER, <span class="hljs-keyword">true</span>);
+    <span class="hljs-variable">$curl_ret</span> = curl_exec(<span class="hljs-variable">$ch</span>);
+    <span class="hljs-preprocessor">?&gt;</span></code></pre>
+
+<p>With this approach, we are able to do the same <code>HTTP PUT</code> without incurring in performance penalties associated with excessive use of file <code>stat()</code> operations.</p>
+
+                            </div>
+                        </article>
+                    </section>
+                </li>
+            
+                <li>
+                    <section class="post">
+                        <article>
+                            <h2><a href="/posts/backup-only-what-s-necessary/index.html#main-start">Backup only what&#39;s necessary</a></h2>
+                            <div>
+                                <p>When backing up a home directory, you don&#39;t want to backup subversion checkout subdirectories that have no changes relative to their repositories (i.e. subversion directories with no local changes).</p>
+<p>I made a script which will help you find directories corresponding to svn checkouts that are up-to date relative to their repositories. I saved it as <code>~/bin/get_up_to_date_svn_dirs.pl</code>:</p>
+<pre><code class="hljs perl"><span class="hljs-comment">#!/usr/bin/perl -w</span>
+
+    <span class="hljs-keyword">my</span> <span class="hljs-variable">@input_list</span> = ();
+    <span class="hljs-keyword">my</span> <span class="hljs-variable">@clean_paths</span> = ();
+    <span class="hljs-keyword">my</span> <span class="hljs-variable">@clean_parents</span> = ();
+    <span class="hljs-keyword">while</span>(&lt;&gt;) { 
+        <span class="hljs-keyword">push</span> <span class="hljs-variable">@input_list</span>, <span class="hljs-variable">$_</span>;
+    }
+
+    <span class="hljs-keyword">my</span> <span class="hljs-variable">$cmp_path</span> = <span class="hljs-string">"cmp_path"</span>;
+
+    <span class="hljs-comment"># sorts alphabetically/lexicographically based on the "path" component of the input line.</span>
+    <span class="hljs-variable">@input_list</span> = <span class="hljs-variable">@clean_parents</span> = <span class="hljs-keyword">sort</span> cmp_path <span class="hljs-variable">@input_list</span>;
+
+    <span class="hljs-keyword">for</span> <span class="hljs-keyword">my</span> <span class="hljs-variable">$line</span>(<span class="hljs-variable">@input_list</span>) {
+        <span class="hljs-variable">$line</span> =~ <span class="hljs-regexp">m/^\s*(\d+)\s*(.*)\s*$/</span>;
+        <span class="hljs-keyword">my</span> <span class="hljs-variable">$path</span> = <span class="hljs-variable">$2</span>;
+        <span class="hljs-keyword">my</span> <span class="hljs-variable">$svn_info_out</span> = <span class="hljs-string">`cd $path; svn info &gt; /dev/null 2&gt;/dev/null; echo \$?;`</span>;
+        <span class="hljs-keyword">chomp</span> <span class="hljs-variable">$svn_info_out</span>;
+        <span class="hljs-keyword">if</span>(<span class="hljs-variable">$svn_info_out</span> eq <span class="hljs-string">"1"</span>) {
+            <span class="hljs-keyword">next</span>;
+        }
+        <span class="hljs-keyword">my</span> <span class="hljs-variable">$svn_status_out</span> = <span class="hljs-string">`cd $path; svn status`</span>;
+        <span class="hljs-keyword">chomp</span> <span class="hljs-variable">$svn_status_out</span>;
+        <span class="hljs-keyword">if</span>(<span class="hljs-variable">$svn_status_out</span> eq <span class="hljs-string">""</span>) {
+            <span class="hljs-keyword">if</span>(<span class="hljs-keyword">scalar</span>(<span class="hljs-variable">@clean_paths</span>) != <span class="hljs-number">0</span>) {
+                <span class="hljs-keyword">my</span> <span class="hljs-variable">$prev_clean_path</span> = <span class="hljs-variable">$clean_paths</span>[<span class="hljs-keyword">scalar</span>(<span class="hljs-variable">@clean_paths</span>) - <span class="hljs-number">1</span>];
+                <span class="hljs-keyword">if</span>(<span class="hljs-variable">$path</span> =~ <span class="hljs-regexp">m/^.*$prev_clean_path.*$/</span>) {
+                    <span class="hljs-keyword">next</span>;
+                }
+            }
+            <span class="hljs-keyword">push</span> <span class="hljs-variable">@clean_paths</span>, <span class="hljs-variable">$path</span>;
+            <span class="hljs-keyword">print</span> <span class="hljs-string">"<span class="hljs-variable">$path</span>\n"</span>;
+        }
+    }
+
+    <span class="hljs-comment"># comparison function takes 2 lines having the following format:</span>
+    <span class="hljs-comment"># 1024    /tmp/a/file.txt</span>
+    <span class="hljs-comment"># and returns the result of alphabetically comparing the second part of the line</span>
+    <span class="hljs-comment"># (e.g. /tmp/a/file.txt)</span>
+    <span class="hljs-sub"><span class="hljs-keyword">sub</span> cmp_path {</span>
+        <span class="hljs-variable">$a</span> =~ <span class="hljs-regexp">m/^\s*(\d+)\s*(.*)\s*$/</span>;
+        <span class="hljs-keyword">my</span> <span class="hljs-variable">$path_a</span> = <span class="hljs-variable">$2</span>;
+        <span class="hljs-variable">$b</span> =~ <span class="hljs-regexp">m/^\s*(\d+)\s*(.*)\s*$/</span>;
+        <span class="hljs-keyword">my</span> <span class="hljs-variable">$path_b</span> = <span class="hljs-variable">$2</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-variable">$path_a</span> cmp <span class="hljs-variable">$path_b</span>;
+    }</code></pre>
+
+
+<p>First, I run <code>du</code>, and <code>sort</code> it numerically to get an idea of how big the home directory that I want to back up is, and save the output to file <code>user-du.txt</code> under my own home directory:</p>
+<pre><code class="hljs perl">du ~user/ | <span class="hljs-keyword">sort</span> -n | tee ~<span class="hljs-regexp">/user-du.txt</span></code></pre>
+
+<p>Now, I&#39;ll feed this <code>du</code> output to my script, which will generate a list of paths in the input file that correspond to svn checkout directories that are up to date relative to their repositories. I save this list in file <code>~/tmp/user-all-clean.txt</code>:</p>
+<pre><code class="hljs perl">cat ~<span class="hljs-regexp">/user-du.txt | ~/bin</span><span class="hljs-regexp">/get_up_to_date_svn_dirs.pl | tee ~/tmp</span><span class="hljs-regexp">/user-all-clean.txt</span></code></pre>
+
+<p>At this point, I know:</p>
+<ul>
+<li>the base directory that I want to back up (e.g. the home directory of a user that I want to back up, like <code>~user/</code>).</li>
+<li>a list of paths that it&#39;s not necessary to back up because they&#39;re subversion checkouts with no local changes.</li>
+</ul>
+<p>I can use <code>tar</code>, using the <code>--exclude-from</code> option to finally backup what I want in gzipped tarball file <code>~/user-home.tgz</code></p>
+<pre><code class="hljs perl">tar --exclude-from ~<span class="hljs-regexp">/tmp/user</span>-all-clean.txt -zcvf ~<span class="hljs-regexp">/user-home.tgz ~user/</span></code></pre>
+
+<p>@TODO (exercise for the reader): Have <code>~/bin/get_up_to_date_svn_dirs.pl</code> output the svn <em>repository paths</em> and <em>revision numbers</em> that we&#39;re skipping to get the full information that would allow us to restore the backup precisely by restoring not only the tarball but also checking out the right <em>paths</em> and <em>revisions</em> from subversion.</p>
+
+                            </div>
+                        </article>
+                    </section>
+                </li>
+            
+        </ul>
+
+        <ul class="pagination">
+            
+            <li>
+                <a href="index-2.html">Prev</a>
+            </li>
+            
+            
+        </ul>
+    </main>
+
+    <footer>
+
+    <p>This is <a href="https://github.com/sanx">Gerardo Moad</a>'s blog. A blog generated using a <a href="http://metalsmith.io">Metalsmith.io</a> workflow. The blog source lives <a href="https://github.com/sanx/sanx-blog-source">here</a>, and the static files that github serves are <a href="https://github.com/sanx/sanx.github.io">here</a>. I made the site style from scratch using the excellent <a href="http://sass-lang.com">Sass</a>, with <a href="http://susy.oddbird.net/">Susy</a>.</p>
+
+
+    </footer>
+  
+  </body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="alternate" type="application/atom+xml" href="/rss.xml">
+    <link href='/css/main.css' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/css/highlight-js.default.min.css">
+    <!-- link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css' -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/stylesheet.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/overrides.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/pygment_trac.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/print.css" media="print" / -->
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Receiving and relaying email for my domains over to free webmail accounts. - Gerardo&#39;s musings</title>
+  </head>
+
+  <body>
+    <header>
+        
+      <div>
+        <h1><a href="/">Gerardo&#39;s musings</a></h1>
+        <h2>(not) just another blog, hopefully, this time around</h2>
+        <dl>
+            <dt>On Github</dt>
+            <dd><a href="https://github.com/sanx">github.com/sanx</a></dd>
+            <dt>On LinkedIn</dt>
+            <dd><a href="https://www.linkedin.com/pub/gerardo-moad/3/501/b27">linkedin.com/pub/gerardo-moad</a></dd>
+            <dt>On Twitter</dt>
+            <dd><a href="https://twitter.com/sanx">twitter.com/sanx</a></dd>
+        </dl>
+      </div>
+
+    </header>
+
+    <main id="main-start">
+      <section class="post">
+        <article>
+            <h2><a href="/posts/receiving-and-relaying-email-for-my-domains-over-to-free-webmail-accounts/index.html">Receiving and relaying email for my domains over to free webmail accounts.</a></h1>
+            <p class="post-date">(2014-07-23)</p>
+            <div>
+                <h2 id="goal">Goal</h2>
+<ul>
+<li>Be able to receive email addressed to email addresses in domains that I own
+on commercial, free webmail accounts (or any other kind of email system,
+really).</li>
+<li>Not pay any extra money for this (beyond what I&#39;m paying for domain
+registration, DNS hosting, and my server).</li>
+</ul>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Have some domains that you&#39;re in control of, e.g.: the domain resolves
+to a host that you control, you have access to the DNS hosting account and
+are able to add/remove/modify DNS records (especially MX records).</li>
+<li>Have control over a host on the internet where you&#39;ll be pointing some
+records of your domains to. For this guide, I&#39;m using Debian-based Ubuntu Linux
+Server distribution version 14.04 LTS.</li>
+</ul>
+<h2 id="steps">Steps</h2>
+<ol>
+<li><p>create a new MX record with the following information (how you enter this
+into your DNS provider&#39;s interface should be easy to figure out):</p>
+<pre><code>host name: yourdomain.com
+type: MX
+ttl: default
+priority: 10 (Normal)
+data: yourdomain.com
+</code></pre></li>
+<li><p><code>sudo apt-get install postfix</code></p>
+</li>
+<li>Choose &quot;Internet site&quot; option on menu prompt and enter settings that make
+sense. We&#39;ll do the rest of the configuration manually.</li>
+<li><p>Put this at the end of your <code>/etc/postfix/main.cf</code> file:</p>
+<pre><code>## added by me
+virtual_alias_domains = yourfirstdomain.com, yourseconddomain.com
+virtual_alias_maps = hash:/etc/postfix/virtual
+inet_protocols = all
+</code></pre></li>
+<li><p>Create file <code>/etc/postfix/virtual</code> and add lines to it like the following:</p>
+<pre><code>name@yourfirstdomain.com        name@freewebmailprovider.com
+name@yourseconddomain.com       name@freewebmailprovider.com
+</code></pre><p>... this will cause any mail for <code>name@yourfirstdomain.com</code> and 
+<code>name@yourseconddomain.com</code> to be forwarded to <code>name@freewebmailprovider.com</code></p>
+</li>
+<li>Make sure you generate the &quot;hash&quot; or &quot;.db&quot; file for <code>virtual</code> by doing:
+<code>sudo postmap hash:/etc/postfix/virtual</code></li>
+<li>Reload <code>postfix</code> config with <code>sudo /etc/init.d/postfix reload</code>, or
+start <code>postfix</code> in case it is not running already: <code>sudo /etc/init.d/postfix start</code></li>
+<li>Make sure that port 25 (SMTP) is open on your server&#39;s ACL/firewall!</li>
+<li>Done!</li>
+</ol>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<p>Pretty much anything that might have gone wrong with your <code>postfix</code> configuration
+will be logged to either one of these upon the package&#39;s <code>start</code> or <code>reload</code>:</p>
+<pre><code>/var/log/mail.err
+/var/log/mail.log
+</code></pre><h2 id="conclusion">Conclusion</h2>
+<p>This comes in very handy for leveraging your ability to support multiple email
+addresses on the domains that you control while letting you not worry about
+setting up an actual client, and using existing free webmail accounts for
+receiving your email.</p>
+<p>This approach covers the <em>receiving</em> part very well, but I&#39;ve made no effort
+to support sending via your server/hosting, and it&#39;s unlikely to work out of
+the box without additional configuration. My suggestion is to not try to use
+your server for sending email, and to use your webmail or similar client
+with a &quot;Reply-To&quot; header if you want. I don&#39;t really care too much since I
+just want the receiving part to work, and later on I can reply to emails that
+matter to me using my real email address.</p>
+
+            </div>
+        </article>
+
+      </section>
+    </main>
+    <footer>
+
+    <p>This is <a href="https://github.com/sanx">Gerardo Moad</a>'s blog. A blog generated using a <a href="http://metalsmith.io">Metalsmith.io</a> workflow. The blog source lives <a href="https://github.com/sanx/sanx-blog-source">here</a>, and the static files that github serves are <a href="https://github.com/sanx/sanx.github.io">here</a>. I made the site style from scratch using the excellent <a href="http://sass-lang.com">Sass</a>, with <a href="http://susy.oddbird.net/">Susy</a>.</p>
+
+
+    </footer>
+  </body>
+</html>

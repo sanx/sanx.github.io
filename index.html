@@ -4,282 +4,252 @@
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link rel="alternate" type="application/atom+xml" href="/feed.xml">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="http://gerardomoad.com/stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="http://gerardomoad.com/stylesheets/overrides.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="http://gerardomoad.com/stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="http://gerardomoad.com/stylesheets/print.css" media="print" />
+    <link rel="alternate" type="application/atom+xml" href="/rss.xml">
+    <link href='/css/main.css' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/css/highlight-js.default.min.css">
+    <!-- link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css' -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/stylesheet.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/overrides.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/pygment_trac.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/print.css" media="print" / -->
 
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-    <title>Gerardo Moad's blog</title>
+    <title>Gerardo&#39;s musings</title>
   </head>
 
   <body>
     <header>
-      <div class="inner">
-        <h1>Gerardo Moad's blog</h1>
-        <h2>A software guy's ideas and findings scratchpad...</h2>
-        <a href="https://github.com/sanx" class="button"><small>Follow me on</small>GitHub</a>
+        
+      <div>
+        <h1><a href="/">Gerardo&#39;s musings</a></h1>
+        <h2>(not) just another blog, hopefully, this time around</h2>
+        <dl>
+            <dt>On Github</dt>
+            <dd><a href="https://github.com/sanx">github.com/sanx</a></dd>
+            <dt>On LinkedIn</dt>
+            <dd><a href="https://www.linkedin.com/pub/gerardo-moad/3/501/b27">linkedin.com/pub/gerardo-moad</a></dd>
+            <dt>On Twitter</dt>
+            <dd><a href="https://twitter.com/sanx">twitter.com/sanx</a></dd>
+        </dl>
       </div>
+
     </header>
 
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
+    <main>
+        <ul class="posts">
             <!-- This loops through the paginated posts -->
             
-              <h1><a href="/2014/08/21/safely-daemonizing-a-nodejs-server-in-ubuntu.html">Safely Daemonizing A Nodejs Server In Ubuntu</a></h1>
-              <p class="author">
-                <p class="post-date">21 Aug 2014</p>
-              </p>
-              <div class="content">
-                <h1 id="safely-daemonizing-a-nodejs-server-in-ubuntu">Safely <em>daemonizing</em> a NodeJS server in Ubuntu</h1>
-
-<p>We don’t want to run the NodeJS service as root just to be able to bind to
+                <li>
+                    <section class="post">
+                        <article>
+                            <h2><a href="/posts/safely-daemonizing-a-nodejs-server-in-ubuntu/index.html#main-start">Safely daemonizing a NodeJS server in Ubuntu</a></h2>
+                            <div>
+                                <p>We don&#39;t want to run the NodeJS service as root just to be able to bind to
 port 80, given all the risks that doing this would bring.</p>
-
 <h2 id="use-iptables-to-forward-requests-coming-in-on-port-80-over-to-port-3000">Use <code>iptables</code> to forward requests coming in on port 80 over to port 3000</h2>
+<pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> iptables -t nat -A PREROUTING -i eth0 -p tcp --dport <span class="hljs-number">80</span> -j REDIRECT --to-port <span class="hljs-number">3000</span></code></pre>
 
-<p><code>sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 3000</code></p>
+<pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> ip6tables -t nat -A PREROUTING -i eth0 -p tcp --dport <span class="hljs-number">80</span> -j REDIRECT --to-port <span class="hljs-number">3000</span></code></pre>
 
-<p><code>sudo ip6tables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 3000</code></p>
-
-<p>… this will work until you restart the server.</p>
-
+<p>... this will work until you restart the server.</p>
 <h2 id="use-iptables-persistent-to-restore-the-iptables-routes-automatically-on-every-reboot">Use <code>iptables-persistent</code> to restore the <code>iptables</code> routes automatically on every reboot</h2>
+<pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> apt-get install iptables-persistent</code></pre>
 
-<p><code>sudo apt-get install iptables-persistent</code></p>
-
-<p>… if you did this after the <code>iptables</code> command above it, just answer <em>yes</em> and <em>yes</em>
+<p>... if you did this after the <code>iptables</code> command above it, just answer <em>yes</em> and <em>yes</em>
 to save your forwarding rules in package <code>iptables-persistent</code> post-install script.</p>
-
 <p>If, for some reason, your routes were not quite working the way you wanted them to
 before you installed package <code>iptables-persistent</code>, go ahead and tweak them to your
 liking, and then run the following commands to save them:</p>
+<pre><code></code></pre>
 
-<p><code>sudo iptables-save &gt; /etc/iptables/rules.v4</code></p>
+<pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> ip6tables-save &gt; /etc/iptables/rules.v6</code></pre>
 
-<p><code>sudo ip6tables-save &gt; /etc/iptables/rules.v6</code></p>
-
-<p>That’s it! <code>iptables-persistent</code> is a service that should load <code>/etc/iptables/rules.v{4,6}</code>
+<p>That&#39;s it! <code>iptables-persistent</code> is a service that should load <code>/etc/iptables/rules.v{4,6}</code>
 into <code>iptables</code> on system startup!</p>
-
-<h2 id="use-upstart-to-daemonize-your-nodejs-service">Use <code>upstart</code> to “daemonize” your <code>NodeJS</code> service</h2>
-
+<h2 id="use-upstart-to-daemonize-your-nodejs-service">Use <code>upstart</code> to &quot;daemonize&quot; your <code>NodeJS</code> service</h2>
 <p>cat /home/ubuntu/myservice/server.sh:</p>
+<pre><code class="hljs bash"><span class="hljs-shebang">#!/bin/bash
+</span>
+    SCRIPT_PATH=$(dirname `which <span class="hljs-variable">$0</span>`)
 
-<pre><code>#!/bin/bash
-
-SCRIPT_PATH=$(dirname `which $0`)
-
-node --harmony $SCRIPT_PATH/index.js
-</code></pre>
+    node --harmony <span class="hljs-variable">$SCRIPT_PATH</span>/index.js</code></pre>
 
 <p>cat /etc/init/myservice.conf:</p>
+<pre><code class="hljs bash"><span class="hljs-comment"># cat /etc/init/myservice.conf</span>
+    <span class="hljs-comment"># http://upstart.ubuntu.com/wiki/Stanzas</span>
 
-<pre><code># cat /etc/init/myservice.conf
-# http://upstart.ubuntu.com/wiki/Stanzas
+    description <span class="hljs-string">"My Service"</span>
+    author      <span class="hljs-string">"github.com/sanx"</span>
 
-description "My Service"
-author      "github.com/sanx"
+    stop on shutdown
+    respawn
+    respawn limit <span class="hljs-number">20</span> <span class="hljs-number">5</span>
 
-stop on shutdown
-respawn
-respawn limit 20 5
+    <span class="hljs-comment"># Max open files are @ 1024 by default. Bit few.</span>
+    limit nofile <span class="hljs-number">32768</span> <span class="hljs-number">32768</span>
 
-# Max open files are @ 1024 by default. Bit few.
-limit nofile 32768 32768
+    script
+      <span class="hljs-keyword">set</span> <span class="hljs-operator">-e</span>
+      mkfifo /tmp/myservice-log-fifo
+      ( logger -t myservice &lt;/tmp/myservice-log-fifo &amp; )
+      <span class="hljs-keyword">exec</span> &gt;/tmp/myservice-log-fifo
+      rm /tmp/myservice-log-fifo
+      <span class="hljs-keyword">exec</span> <span class="hljs-built_in">sudo</span> -u www-data MASTERKEY=`<span class="hljs-built_in">echo</span> hi` /home/ubuntu/myservice/server.sh <span class="hljs-number">2</span>&gt;&amp;<span class="hljs-number">1</span>
+    end script
 
-script
-  set -e
-  mkfifo /tmp/myservice-log-fifo
-  ( logger -t myservice &lt;/tmp/myservice-log-fifo &amp; )
-  exec &gt;/tmp/myservice-log-fifo
-  rm /tmp/myservice-log-fifo
-  exec sudo -u www-data MASTERKEY=`echo hi` /home/ubuntu/myservice/server.sh 2&gt;&amp;1
-end script
+    post-start script
+       <span class="hljs-built_in">echo</span> <span class="hljs-string">'My Service Just started'</span>
+    end script</code></pre>
 
-post-start script
-   echo 'My Service Just started'
-end script
-</code></pre>
-
-<p>That’s it! Now, you can start your service now by calling: <code>start myservice</code>, stop
+<p>That&#39;s it! Now, you can start your service now by calling: <code>start myservice</code>, stop
 it with <code>stop myservice</code>, and it will run automatically on system startup!</p>
 
-              </div>
+                            </div>
+                        </article>
+                    </section>
+                </li>
             
-              <h1><a href="/2014/07/23/reconfiguring-an-installed-package-in-debian-and-ubuntu.html">Reconfiguring An Installed Package In Debian And Ubuntu</a></h1>
-              <p class="author">
-                <p class="post-date">23 Jul 2014</p>
-              </p>
-              <div class="content">
-                <h1 id="reconfiguring-an-installed-package-in-ubuntu-debian-and-other-ubuntu-based-distributions">Reconfiguring an installed package in Ubuntu, Debian, and other Ubuntu based distributions.</h1>
-
-<p>It’s happened to me several times that I <code>apt-get install</code> some packages which
-prompt me to enter some settings in a <code>curses</code> interface, but I don’t know which
+                <li>
+                    <section class="post">
+                        <article>
+                            <h2><a href="/posts/reconfiguring-an-installed-package-in-ubuntu-debian-and-other-ubuntu-based-distributions/index.html#main-start">Reconfiguring an installed package in Ubuntu, Debian, and other Ubuntu based distributions.</a></h2>
+                            <div>
+                                <p>It&#39;s happened to me several times that I <code>apt-get install</code> some packages which
+prompt me to enter some settings in a <code>curses</code> interface, but I don&#39;t know which
 values to enter at the time, or later on realize that I need different settings
 than what I had originally entered.</p>
-
 <p>To see the screen that you saw again, just do:</p>
-
 <p><code>sudo dpkg-reconfigure PKG_NAME</code></p>
-
-<p>… where <code>PKG_NAME</code> is the name of the package whose configuration screens
+<p>... where <code>PKG_NAME</code> is the name of the package whose configuration screens
 you wish to see again.</p>
 
-              </div>
+                            </div>
+                        </article>
+                    </section>
+                </li>
             
-              <h1><a href="/2014/07/23/receiving-and-relaying-email-for-my-domains-to-free-webmail-accounts.html">Receiving And Relaying Email For My Domains To Free Webmail Accounts</a></h1>
-              <p class="author">
-                <p class="post-date">23 Jul 2014</p>
-              </p>
-              <div class="content">
-                <h1 id="receiving-and-relaying-email-for-my-domains-over-to-free-webmail-accounts">Receiving and relaying email for my domains over to free webmail accounts.</h1>
-
-<h2 id="goal">Goal</h2>
-
+                <li>
+                    <section class="post">
+                        <article>
+                            <h2><a href="/posts/receiving-and-relaying-email-for-my-domains-over-to-free-webmail-accounts/index.html#main-start">Receiving and relaying email for my domains over to free webmail accounts.</a></h2>
+                            <div>
+                                <h2 id="goal">Goal</h2>
 <ul>
-  <li>Be able to receive email addressed to email addresses in domains that I own
+<li>Be able to receive email addressed to email addresses in domains that I own
 on commercial, free webmail accounts (or any other kind of email system,
 really).</li>
-  <li>Not pay any extra money for this (beyond what I’m paying for domain
+<li>Not pay any extra money for this (beyond what I&#39;m paying for domain
 registration, DNS hosting, and my server).</li>
 </ul>
-
 <h2 id="prerequisites">Prerequisites</h2>
-
 <ul>
-  <li>Have some domains that you’re in control of, e.g.: the domain resolves
+<li>Have some domains that you&#39;re in control of, e.g.: the domain resolves
 to a host that you control, you have access to the DNS hosting account and
 are able to add/remove/modify DNS records (especially MX records).</li>
-  <li>Have control over a host on the internet where you’ll be pointing some
-records of your domains to. For this guide, I’m using Debian-based Ubuntu Linux
+<li>Have control over a host on the internet where you&#39;ll be pointing some
+records of your domains to. For this guide, I&#39;m using Debian-based Ubuntu Linux
 Server distribution version 14.04 LTS.</li>
 </ul>
-
 <h2 id="steps">Steps</h2>
-
 <ol>
-  <li>
-    <p>create a new MX record with the following information (how you enter this
-into your DNS provider’s interface should be easy to figure out):</p>
-
-    <pre><code>host name: yourdomain.com
+<li><p>create a new MX record with the following information (how you enter this
+into your DNS provider&#39;s interface should be easy to figure out):</p>
+<pre><code>host name: yourdomain.com
 type: MX
 ttl: default
 priority: 10 (Normal)
 data: yourdomain.com
-</code></pre>
-  </li>
-  <li><code>sudo apt-get install postfix</code></li>
-  <li>Choose “Internet site” option on menu prompt and enter settings that make
-sense. We’ll do the rest of the configuration manually.</li>
-  <li>
-    <p>Put this at the end of your <code>/etc/postfix/main.cf</code> file:</p>
-
-    <pre><code>## added by me
+</code></pre></li>
+<li><p><code>sudo apt-get install postfix</code></p>
+</li>
+<li>Choose &quot;Internet site&quot; option on menu prompt and enter settings that make
+sense. We&#39;ll do the rest of the configuration manually.</li>
+<li><p>Put this at the end of your <code>/etc/postfix/main.cf</code> file:</p>
+<pre><code>## added by me
 virtual_alias_domains = yourfirstdomain.com, yourseconddomain.com
 virtual_alias_maps = hash:/etc/postfix/virtual
 inet_protocols = all
-</code></pre>
-  </li>
-  <li>
-    <p>Create file <code>/etc/postfix/virtual</code> and add lines to it like the following:</p>
-
-    <pre><code>name@yourfirstdomain.com        name@freewebmailprovider.com
-name@yourseconddomain.com       name@freewebmailprovider.com ... this will cause any mail for `name@yourfirstdomain.com` and  `name@yourseconddomain.com` to be forwarded to `name@freewebmailprovider.com`
-</code></pre>
-  </li>
-  <li>Make sure you generate the “hash” or “.db” file for <code>virtual</code> by doing:
+</code></pre></li>
+<li><p>Create file <code>/etc/postfix/virtual</code> and add lines to it like the following:</p>
+<pre><code>name@yourfirstdomain.com        name@freewebmailprovider.com
+name@yourseconddomain.com       name@freewebmailprovider.com
+</code></pre><p>... this will cause any mail for <code>name@yourfirstdomain.com</code> and 
+<code>name@yourseconddomain.com</code> to be forwarded to <code>name@freewebmailprovider.com</code></p>
+</li>
+<li>Make sure you generate the &quot;hash&quot; or &quot;.db&quot; file for <code>virtual</code> by doing:
 <code>sudo postmap hash:/etc/postfix/virtual</code></li>
-  <li>Reload <code>postfix</code> config with <code>sudo /etc/init.d/postfix reload</code>, or
+<li>Reload <code>postfix</code> config with <code>sudo /etc/init.d/postfix reload</code>, or
 start <code>postfix</code> in case it is not running already: <code>sudo /etc/init.d/postfix start</code></li>
-  <li>Make sure that port 25 (SMTP) is open on your server’s ACL/firewall!</li>
-  <li>Done!</li>
+<li>Make sure that port 25 (SMTP) is open on your server&#39;s ACL/firewall!</li>
+<li>Done!</li>
 </ol>
-
 <h2 id="troubleshooting">Troubleshooting</h2>
-
 <p>Pretty much anything that might have gone wrong with your <code>postfix</code> configuration
-will be logged to either one of these upon the package’s <code>start</code> or <code>reload</code>:</p>
-
+will be logged to either one of these upon the package&#39;s <code>start</code> or <code>reload</code>:</p>
 <pre><code>/var/log/mail.err
 /var/log/mail.log
-</code></pre>
-
-<h2 id="conclusion">Conclusion</h2>
-
+</code></pre><h2 id="conclusion">Conclusion</h2>
 <p>This comes in very handy for leveraging your ability to support multiple email
 addresses on the domains that you control while letting you not worry about
 setting up an actual client, and using existing free webmail accounts for
 receiving your email.</p>
-
-<p>This approach covers the <em>receiving</em> part very well, but I’ve made no effort
-to support sending via your server/hosting, and it’s unlikely to work out of
+<p>This approach covers the <em>receiving</em> part very well, but I&#39;ve made no effort
+to support sending via your server/hosting, and it&#39;s unlikely to work out of
 the box without additional configuration. My suggestion is to not try to use
 your server for sending email, and to use your webmail or similar client
-with a “Reply-To” header if you want. I don’t really care too much since I
+with a &quot;Reply-To&quot; header if you want. I don&#39;t really care too much since I
 just want the receiving part to work, and later on I can reply to emails that
 matter to me using my real email address.</p>
 
-              </div>
+                            </div>
+                        </article>
+                    </section>
+                </li>
             
-              <h1><a href="/2014/05/21/vim-settings-missing-in-osx.html">Vim settings missing in OSX</a></h1>
-              <p class="author">
-                <p class="post-date">21 May 2014</p>
-              </p>
-              <div class="content">
-                <p>I got my new laptop (a 13’’ rMBP). Once I started using it, I started noticing
+                <li>
+                    <section class="post">
+                        <article>
+                            <h2><a href="/posts/vim-settings-missing-in-osx/index.html#main-start">Vim settings missing in OSX</a></h2>
+                            <div>
+                                <p>I got my new laptop (a 13&#39;&#39; rMBP). Once I started using it, I started noticing
 there are a few default settings that an <em>Ubuntu</em> install of <code>vim</code> has that 
-were missing in <em>OSX</em> (Mavericks). Here are the few that I’ve added to my
-<code>~/.vimrc</code> so far that I’ve found useful:</p>
-
+were missing in <em>OSX</em> (Mavericks). Here are the few that I&#39;ve added to my
+<code>~/.vimrc</code> so far that I&#39;ve found useful:</p>
 <pre><code>set ruler
 filetype plugin indent on
 syntax on
-</code></pre>
-
-<p>… and some additional settings to have tabs and shifts be automatically
+</code></pre><p>... and some additional settings to have tabs and shifts be automatically
 converted to 4 spaces:</p>
-
 <pre><code>set expandtab
 set shiftwidth=4
 set tabstop=4
 set softtabstop=4
-</code></pre>
-
-<p>… and finally, I enable modelines, since I like to use them on my source
-files and to support them when opening others’ files:</p>
-
+</code></pre><p>... and finally, I enable modelines, since I like to use them on my source
+files and to support them when opening others&#39; files:</p>
 <pre><code>set modeline
 set modelines=5
 </code></pre>
-
-
-              </div>
+                            </div>
+                        </article>
+                    </section>
+                </li>
             
-              <h1><a href="/2014/05/21/ruby-jekyll-github-pages-osx-madness.html">Ruby/Jekyll/Github Pages/OSX madness!</a></h1>
-              <p class="author">
-                <p class="post-date">21 May 2014</p>
-              </p>
-              <div class="content">
-                <p>Trying to get my Jekyll blog setup locally on my new Mac, I’ve been following
+                <li>
+                    <section class="post">
+                        <article>
+                            <h2><a href="/posts/ruby-jekyll-github-pages-osx-madness/index.html#main-start">Ruby/Jekyll/Github Pages/OSX madness!</a></h2>
+                            <div>
+                                <p>Trying to get my Jekyll blog setup locally on my new Mac, I&#39;ve been following
 these steps, and encountering the following issues:</p>
-
 <p>I remembered that I would need to use <code>bundle</code> to launch my Jekyll instance
 in order for it to work the same way as it does on the hosted Github Pages, so I
 ran:</p>
-
-<div class="highlight"><pre><code class="sh"><span class="lineno">1</span>     sudo gem install bundle
-</code></pre></div>
+<pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> gem install bundle</code></pre>
 
 <p>output:</p>
-
 <pre><code>Fetching: bundler-1.6.2.gem (100%)
 Successfully installed bundler-1.6.2
 Fetching: bundle-0.0.1.gem (100%)
@@ -289,18 +259,12 @@ Installing ri documentation for bundler-1.6.2
 Parsing documentation for bundle-0.0.1
 Installing ri documentation for bundle-0.0.1
 2 gems installed
-</code></pre>
-
-<p>as Borat would say: “nice! I like!”. I like, indeed!</p>
-
+</code></pre><p>as Borat would say: &quot;nice! I like!&quot;. I like, indeed!</p>
 <p>I also remembered that for everything that the hosted Github Pages does
 to work locally, I had to install the <code>git-pages</code> <em>gem</em>. I tried doing so:</p>
-
-<div class="highlight"><pre><code class="sh"><span class="lineno">1</span>     sudo gem install github-pages
-</code></pre></div>
+<pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> gem install github-pages</code></pre>
 
 <p>output:</p>
-
 <pre><code>Fetching: liquid-2.5.5.gem (100%)
 Successfully installed liquid-2.5.5
 Fetching: fast-stemmer-1.0.2.gem (100%)
@@ -311,74 +275,54 @@ ERROR:  Error installing github-pages:
     /System/Library/Frameworks/Ruby.framework/Versions/2.0/usr/bin/ruby extconf.rb
 creating Makefile
 
-make "DESTDIR="
+make &quot;DESTDIR=&quot;
 compiling porter.c
-porter.c:359:27: warning: '&amp;&amp;' within '||' [-Wlogical-op-parentheses]
+porter.c:359:27: warning: &#39;&amp;&amp;&#39; within &#39;||&#39; [-Wlogical-op-parentheses]
       if (a &gt; 1 || a == 1 &amp;&amp; !cvc(z, z-&gt;k - 1)) z-&gt;k--;
                 ~~ ~~~~~~~^~~~~~~~~~~~~~~~~~~~
-porter.c:359:27: note: place parentheses around the '&amp;&amp;' expression to silence this warning
+porter.c:359:27: note: place parentheses around the &#39;&amp;&amp;&#39; expression to silence this warning
       if (a &gt; 1 || a == 1 &amp;&amp; !cvc(z, z-&gt;k - 1)) z-&gt;k--;
                           ^
                    (                          )
 1 warning generated.
 compiling porter_wrap.c
 linking shared-object stemmer.bundle
-clang: error: unknown argument: '-multiply_definedsuppress' [-Wunused-command-line-argument-hard-error-in-future]
+clang: error: unknown argument: &#39;-multiply_definedsuppress&#39; [-Wunused-command-line-argument-hard-error-in-future]
 clang: note: this will be a hard error (cannot be downgraded to a warning) in the future
 make: *** [stemmer.bundle] Error 1
 
 
 Gem files will remain installed in /Library/Ruby/Gems/2.0.0/gems/fast-stemmer-1.0.2 for inspection.
 Results logged to /Library/Ruby/Gems/2.0.0/gems/fast-stemmer-1.0.2/ext/gem_make.out
-</code></pre>
-
-<p>… oopsie, there were at least some native packages that could not be built
+</code></pre><p>... oopsie, there were at least some native packages that could not be built
 on my system. After some investigation, I finally got it working and contributed my solution to <strong>Stack Overflow</strong>
 on <a href="http://stackoverflow.com/a/23795873/1369119">here</a>. Damn, it feels good to be a gangster!</p>
-
-<p>Now, I’m able to run <code>bundle exec jekyll serve</code> on my Mac locally, and it fires
+<p>Now, I&#39;m able to run <code>bundle exec jekyll serve</code> on my Mac locally, and it fires
 up an instance of my <strong>Github Pages</strong>/<strong>Jekyll</strong> blog on port 4000.</p>
 
-              </div>
+                            </div>
+                        </article>
+                    </section>
+                </li>
             
+        </ul>
 
-            <!-- Pagination links -->
+        <ul class="pagination">
             
-            <div class="pagination">
-              
-                <span>&laquo; Prev</span>
-              
-
-              
-                
-                  <em>1</em>
-                
-              
-                
-                  <a href="/page2">2</a>
-                
-              
-                
-                  <a href="/page3">3</a>
-                
-              
-
-              
-                <a href="/page2">Next &raquo;</a>
-              
-            </div>
             
-        </section>
+            <li>
+                <a href="index-2.html">Next</a>
+            </li>
+            
+        </ul>
+    </main>
 
-        <aside id="sidebar">
+    <footer>
+
+    <p>This is <a href="https://github.com/sanx">Gerardo Moad</a>'s blog. A blog generated using a <a href="http://metalsmith.io">Metalsmith.io</a> workflow. The blog source lives <a href="https://github.com/sanx/sanx-blog-source">here</a>, and the static files that github serves are <a href="https://github.com/sanx/sanx.github.io">here</a>. I made the site style from scratch using the excellent <a href="http://sass-lang.com">Sass</a>, with <a href="http://susy.oddbird.net/">Susy</a>.</p>
 
 
-                    <p>This page was initially generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>, then it was converted into a templated Jekyll blog by <a href="https://github.com/sanx">Gerardo Moad</a> (see <a href="https://github.com/sanx/sanx.github.io">repo</a>).</p>
-
-        </aside>
-      </div>
-    </div>
-
+    </footer>
   
   </body>
 </html>

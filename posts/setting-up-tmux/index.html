@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="alternate" type="application/atom+xml" href="/rss.xml">
+    <link href='/css/main.css' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/css/highlight-js.default.min.css">
+    <!-- link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css' -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/stylesheet.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/overrides.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/pygment_trac.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/print.css" media="print" / -->
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Setting up `tmux` - Gerardo&#39;s musings</title>
+  </head>
+
+  <body>
+    <header>
+        
+      <div>
+        <h1><a href="/">Gerardo&#39;s musings</a></h1>
+        <h2>(not) just another blog, hopefully, this time around</h2>
+        <dl>
+            <dt>On Github</dt>
+            <dd><a href="https://github.com/sanx">github.com/sanx</a></dd>
+            <dt>On LinkedIn</dt>
+            <dd><a href="https://www.linkedin.com/pub/gerardo-moad/3/501/b27">linkedin.com/pub/gerardo-moad</a></dd>
+            <dt>On Twitter</dt>
+            <dd><a href="https://twitter.com/sanx">twitter.com/sanx</a></dd>
+        </dl>
+      </div>
+
+    </header>
+
+    <main id="main-start">
+      <section class="post">
+        <article>
+            <h2><a href="/posts/setting-up-tmux/index.html">Setting up `tmux`</a></h1>
+            <p class="post-date">(2014-05-13)</p>
+            <div>
+                <p>Now that I&#39;ve <em>kind of</em> lost (I hope that I haven&#39;t, but I&#39;ve been lazy to unbury it from my backups, plus I like being kind of forced to re-do my setup from scratch) my old *nix setup, including my .bashrc and my tmux setup, I need to re-do my tmux setup file.</p>
+<p>I like tmux to act gnu screen-ish (mainly having <code>Ctrl-A</code> as the start of command sequences, and having both <code>Ctrl-A Ctrl-A</code> and <code>Ctrl-A A</code> act as <em>jump to last seen panel</em> sequence. I think that&#39;s all I need from gnu screen that&#39;s initially missing in tmux.</p>
+<p><em>Update</em>: A few days after I initially wrote this post, I realized that about the only settings that I need to change in order to feel comfortable using <code>tmux</code> are:</p>
+<ul>
+<li>the default escape sequence (<code>Ctrl-B</code> by default) to <code>Ctrl-A</code> (a la <em>GNU</em> <code>screen</code>)</li>
+<li>use <code>vi</code> keys for navigating the screen (while in copy or command modes)</li>
+<li>(bonus) have a nice visual distinction between the currently active window, the last active window, and the rest of the windows on the bottom status bar</li>
+</ul>
+<p>This was accomplished easily by putting the following <code>.tmux.conf</code> in my home directory:</p>
+<pre><code># change the default escape sequence form Ctrl-B to Ctrl-A:
+set-option -g prefix C-a
+unbind-key C-b
+bind-key C-a send-prefix
+
+# use &quot;vi&quot; style screen navigation (as opposed to Emacs, which is what tmux uses by default):
+setw -g mode-keys vi
+set -g status-keys vi
+
+# make currently active and last active parts of the status bar different from the rest of the windows:
+set-option -gw window-status-current-bg &quot;green&quot;
+set-option -gw window-status-current-attr &quot;italics&quot;
+
+set-option -gw window-status-last-bg &quot;green&quot;
+set-option -gw window-status-last-attr &quot;bold&quot;
+</code></pre>
+            </div>
+        </article>
+
+      </section>
+    </main>
+    <footer>
+
+    <p>This is <a href="https://github.com/sanx">Gerardo Moad</a>'s blog. A blog generated using a <a href="http://metalsmith.io">Metalsmith.io</a> workflow. The blog source lives <a href="https://github.com/sanx/sanx-blog-source">here</a>, and the static files that github serves are <a href="https://github.com/sanx/sanx.github.io">here</a>. I made the site style from scratch using the excellent <a href="http://sass-lang.com">Sass</a>, with <a href="http://susy.oddbird.net/">Susy</a>.</p>
+
+
+    </footer>
+  </body>
+</html>

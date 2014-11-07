@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="alternate" type="application/atom+xml" href="/rss.xml">
+    <link href='/css/main.css' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/css/highlight-js.default.min.css">
+    <!-- link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css' -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/stylesheet.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/overrides.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/pygment_trac.css" media="screen" / -->
+    <!-- link rel="stylesheet" type="text/css" href="/stylesheets/print.css" media="print" / -->
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Ruby/Jekyll/Github Pages/OSX madness! - Gerardo&#39;s musings</title>
+  </head>
+
+  <body>
+    <header>
+        
+      <div>
+        <h1><a href="/">Gerardo&#39;s musings</a></h1>
+        <h2>(not) just another blog, hopefully, this time around</h2>
+        <dl>
+            <dt>On Github</dt>
+            <dd><a href="https://github.com/sanx">github.com/sanx</a></dd>
+            <dt>On LinkedIn</dt>
+            <dd><a href="https://www.linkedin.com/pub/gerardo-moad/3/501/b27">linkedin.com/pub/gerardo-moad</a></dd>
+            <dt>On Twitter</dt>
+            <dd><a href="https://twitter.com/sanx">twitter.com/sanx</a></dd>
+        </dl>
+      </div>
+
+    </header>
+
+    <main id="main-start">
+      <section class="post">
+        <article>
+            <h2><a href="/posts/ruby-jekyll-github-pages-osx-madness/index.html">Ruby/Jekyll/Github Pages/OSX madness!</a></h1>
+            <p class="post-date">(2014-05-21)</p>
+            <div>
+                <p>Trying to get my Jekyll blog setup locally on my new Mac, I&#39;ve been following
+these steps, and encountering the following issues:</p>
+<p>I remembered that I would need to use <code>bundle</code> to launch my Jekyll instance
+in order for it to work the same way as it does on the hosted Github Pages, so I
+ran:</p>
+<pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> gem install bundle</code></pre>
+
+<p>output:</p>
+<pre><code>Fetching: bundler-1.6.2.gem (100%)
+Successfully installed bundler-1.6.2
+Fetching: bundle-0.0.1.gem (100%)
+Successfully installed bundle-0.0.1
+Parsing documentation for bundler-1.6.2
+Installing ri documentation for bundler-1.6.2
+Parsing documentation for bundle-0.0.1
+Installing ri documentation for bundle-0.0.1
+2 gems installed
+</code></pre><p>as Borat would say: &quot;nice! I like!&quot;. I like, indeed!</p>
+<p>I also remembered that for everything that the hosted Github Pages does
+to work locally, I had to install the <code>git-pages</code> <em>gem</em>. I tried doing so:</p>
+<pre><code class="hljs bash"><span class="hljs-built_in">sudo</span> gem install github-pages</code></pre>
+
+<p>output:</p>
+<pre><code>Fetching: liquid-2.5.5.gem (100%)
+Successfully installed liquid-2.5.5
+Fetching: fast-stemmer-1.0.2.gem (100%)
+Building native extensions.  This could take a while...
+ERROR:  Error installing github-pages:
+        ERROR: Failed to build gem native extension.
+
+    /System/Library/Frameworks/Ruby.framework/Versions/2.0/usr/bin/ruby extconf.rb
+creating Makefile
+
+make &quot;DESTDIR=&quot;
+compiling porter.c
+porter.c:359:27: warning: &#39;&amp;&amp;&#39; within &#39;||&#39; [-Wlogical-op-parentheses]
+      if (a &gt; 1 || a == 1 &amp;&amp; !cvc(z, z-&gt;k - 1)) z-&gt;k--;
+                ~~ ~~~~~~~^~~~~~~~~~~~~~~~~~~~
+porter.c:359:27: note: place parentheses around the &#39;&amp;&amp;&#39; expression to silence this warning
+      if (a &gt; 1 || a == 1 &amp;&amp; !cvc(z, z-&gt;k - 1)) z-&gt;k--;
+                          ^
+                   (                          )
+1 warning generated.
+compiling porter_wrap.c
+linking shared-object stemmer.bundle
+clang: error: unknown argument: &#39;-multiply_definedsuppress&#39; [-Wunused-command-line-argument-hard-error-in-future]
+clang: note: this will be a hard error (cannot be downgraded to a warning) in the future
+make: *** [stemmer.bundle] Error 1
+
+
+Gem files will remain installed in /Library/Ruby/Gems/2.0.0/gems/fast-stemmer-1.0.2 for inspection.
+Results logged to /Library/Ruby/Gems/2.0.0/gems/fast-stemmer-1.0.2/ext/gem_make.out
+</code></pre><p>... oopsie, there were at least some native packages that could not be built
+on my system. After some investigation, I finally got it working and contributed my solution to <strong>Stack Overflow</strong>
+on <a href="http://stackoverflow.com/a/23795873/1369119">here</a>. Damn, it feels good to be a gangster!</p>
+<p>Now, I&#39;m able to run <code>bundle exec jekyll serve</code> on my Mac locally, and it fires
+up an instance of my <strong>Github Pages</strong>/<strong>Jekyll</strong> blog on port 4000.</p>
+
+            </div>
+        </article>
+
+      </section>
+    </main>
+    <footer>
+
+    <p>This is <a href="https://github.com/sanx">Gerardo Moad</a>'s blog. A blog generated using a <a href="http://metalsmith.io">Metalsmith.io</a> workflow. The blog source lives <a href="https://github.com/sanx/sanx-blog-source">here</a>, and the static files that github serves are <a href="https://github.com/sanx/sanx.github.io">here</a>. I made the site style from scratch using the excellent <a href="http://sass-lang.com">Sass</a>, with <a href="http://susy.oddbird.net/">Susy</a>.</p>
+
+
+    </footer>
+  </body>
+</html>
