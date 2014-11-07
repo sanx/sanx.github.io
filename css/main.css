@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /* line 5, ../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -201,8 +202,8 @@ body > header > div > h2 {
 /* line 99, ../../sass/main.scss */
 body > header > div > dl {
   background-color: rgba(255, 255, 255, 0.1);
-  white-space: pre;
   text-align: center;
+  line-height: 1.2em;
   width: 100%;
   float: left;
   margin-left: 0;
@@ -220,55 +221,61 @@ body > header > div > dl {
     background-color: initial;
   }
 }
-/* line 111, ../../sass/main.scss */
-body > header > div > dl > dt {
-  display: inline;
-}
-/* line 112, ../../sass/main.scss */
+/* line 113, ../../sass/main.scss */
 body > header > div > dl > dt:after {
   content: ":";
 }
 @media (min-width: 960px) {
-  /* line 111, ../../sass/main.scss */
+  /* line 112, ../../sass/main.scss */
   body > header > div > dl > dt {
     width: 23.52941%;
     float: left;
     margin-right: 5.88235%;
-    display: block;
     clear: both;
   }
 }
-/* line 122, ../../sass/main.scss */
-body > header > div > dl > dd {
-  display: inline;
-}
 @media (min-width: 960px) {
-  /* line 122, ../../sass/main.scss */
+  /* line 121, ../../sass/main.scss */
   body > header > div > dl > dd {
     width: 70.58824%;
     float: right;
     margin-right: 0;
-    display: block;
   }
-  /* line 126, ../../sass/main.scss */
+  /* line 124, ../../sass/main.scss */
   body > header > div > dl > dd:after {
     content: "";
   }
 }
-/* line 131, ../../sass/main.scss */
+/* line 128, ../../sass/main.scss */
 body > header > div > dl > dd:after {
   content: "\A";
 }
-/* line 139, ../../sass/main.scss */
+/* line 136, ../../sass/main.scss */
 body > main h1, body > main h2, body > main h3, body > main h4, body > main h5, body > main p, body > main ul, body > main li, body > main div, body > footer h1, body > footer h2, body > footer h3, body > footer h4, body > footer h5, body > footer p, body > footer ul, body > footer li, body > footer div {
-  margin: 1em 10px;
+  margin: 0.5em 4px;
   line-height: 1.3em;
+}
+@media (min-width: 960px) {
+  /* line 136, ../../sass/main.scss */
+  body > main h1, body > main h2, body > main h3, body > main h4, body > main h5, body > main p, body > main ul, body > main li, body > main div, body > footer h1, body > footer h2, body > footer h3, body > footer h4, body > footer h5, body > footer p, body > footer ul, body > footer li, body > footer div {
+    margin: 1em 10px;
+  }
 }
 /* line 143, ../../sass/main.scss */
 body > main article > h2, body > footer article > h2 {
   font-size: 1.5em !important;
 }
-/* line 147, ../../sass/main.scss */
+/* line 146, ../../sass/main.scss */
+body > main > ul.posts, body > main > ul.posts li, body > footer > ul.posts, body > footer > ul.posts li {
+  margin: 0.5em 0;
+}
+@media (min-width: 960px) {
+  /* line 146, ../../sass/main.scss */
+  body > main > ul.posts, body > main > ul.posts li, body > footer > ul.posts, body > footer > ul.posts li {
+    margin: 1em 10px;
+  }
+}
+/* line 153, ../../sass/main.scss */
 body > main {
   width: 100%;
   float: left;
@@ -277,23 +284,25 @@ body > main {
   margin-top: 5.26316%;
 }
 @media (min-width: 960px) {
-  /* line 147, ../../sass/main.scss */
+  /* line 153, ../../sass/main.scss */
   body > main {
     width: 70.58824%;
     float: left;
     margin-right: 5.88235%;
   }
 }
-/* line 154, ../../sass/main.scss */
+/* line 160, ../../sass/main.scss */
 body > footer {
   width: 100%;
   float: left;
   margin-left: 0;
   margin-right: 0;
   margin-top: 5.26316%;
+  font-size: 80%;
+  z-index: -1;
 }
 @media (min-width: 960px) {
-  /* line 154, ../../sass/main.scss */
+  /* line 160, ../../sass/main.scss */
   body > footer {
     width: 23.52941%;
     float: right;
@@ -301,37 +310,70 @@ body > footer {
   }
 }
 
-/* line 163, ../../sass/main.scss */
+/* line 171, ../../sass/main.scss */
 ul.posts > li {
   border-top: 1px solid #A1A1A1;
   margin-bottom: 5.26316%;
 }
-/* line 164, ../../sass/main.scss */
+/* line 172, ../../sass/main.scss */
 ul.posts > li:first-of-type {
   border-top: 0px none white;
 }
 
-/* line 172, ../../sass/main.scss */
+/* line 180, ../../sass/main.scss */
 section.post h1 {
   font-weight: bold;
   font-size: 1.5em;
 }
-/* line 176, ../../sass/main.scss */
+/* line 184, ../../sass/main.scss */
 section.post h2 {
   font-weight: bold;
   font-size: 1.2em;
 }
-/* line 180, ../../sass/main.scss */
+/* line 188, ../../sass/main.scss */
 section.post ul {
   list-style-type: disc;
 }
-/* line 183, ../../sass/main.scss */
+/* line 191, ../../sass/main.scss */
 section.post ol {
   list-style-type: decimal;
 }
 
+/* line 196, ../../sass/main.scss */
+ul.pagination {
+  width: 100%;
+  float: left;
+  margin-left: 0;
+  margin-right: 0;
+}
+/* line 198, ../../sass/main.scss */
+ul.pagination li {
+  margin: 0;
+  text-align: center;
+}
+/* line 202, ../../sass/main.scss */
+ul.pagination li.newer a {
+  width: 44.44444%;
+  float: left;
+  margin-right: 11.11111%;
+}
+/* line 204, ../../sass/main.scss */
+ul.pagination li.newer a::before {
+  content: "« « ";
+}
+/* line 208, ../../sass/main.scss */
+ul.pagination li.older a {
+  width: 44.44444%;
+  float: right;
+  margin-right: 0;
+}
+/* line 210, ../../sass/main.scss */
+ul.pagination li.older a::after {
+  content: " » »";
+}
+
 @media (min-width: 960px) {
-  /* line 188, ../../sass/main.scss */
+  /* line 216, ../../sass/main.scss */
   .hljs, pre > code {
     margin-left: -600px;
     margin-right: -600px;
@@ -339,19 +381,19 @@ section.post ol {
   }
 }
 
-/* line 195, ../../sass/main.scss */
+/* line 223, ../../sass/main.scss */
 code {
   font-family: courier, monospace;
 }
 
-/* line 198, ../../sass/main.scss */
+/* line 226, ../../sass/main.scss */
 pre > code {
   display: block;
   background: none repeat scroll 0% 0% #F0F0F0;
   overflow-x: scroll;
 }
 @media (min-width: 960px) {
-  /* line 198, ../../sass/main.scss */
+  /* line 226, ../../sass/main.scss */
   pre > code {
     overflow-x: visible;
   }
