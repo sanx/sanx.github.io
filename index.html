@@ -45,6 +45,71 @@
                 <li>
                     <section class="post">
                         <article>
+                            <h2><a href="/2016-02-20-deploying-metalsmith-blog-with-travis/index.html#main-start"></a></h2>
+                            <div>
+                                <p>I&#39;m setting up Travis to automatically deploy my Metalsmith-generated blog files.</p>
+<ul>
+<li>My blog sources (Markdown and Metalsmith scripts to pregenerate html) repo are at:
+<code>sanx/sanx-blog-source</code> (master branch)</li>
+<li>The github-pages repo whose files get published to my user pages is:
+<code>sanx/sanx.github.io</code> (master branch)</li>
+</ul>
+<p>Steps:</p>
+<ul>
+<li><code>cd ~/sanx-blog-source</code></li>
+<li><code>ssh-keygen -f</code></li>
+<li>Github web, repo <code>sanx/sanx.github.io</code>. Go to <em>repo</em> Settings -&gt; Deploy keys. Add
+a newly generated key. Paste public key. Check &quot;Allow write access&quot;. Click on
+&quot;Add key&quot; to save.</li>
+</ul>
+<p>Next steps (setup travis build and store encrypted deploy ssh keys) are based on <a href="https://docs.travis-ci.com/user/encrypting-files/">https://docs.travis-ci.com/user/encrypting-files/</a>:</p>
+<ul>
+<li>Check that <code>travis -v</code> is <code>1.7.0</code> or later.</li>
+<li><code>travis init</code> (since I didn&#39;t have a <code>.travis.yml</code> already)</li>
+<li><code>travis login</code></li>
+<li><code>travis encrypt-file sanx.github.io.travis --add</code> will generate <code>travis encrypt-file sanx.github.io.travis.enc</code>
+and modify <code>.travis.yml</code> to make the encryption key available to our build.</li>
+</ul>
+<p>Add this to <code>.travis.yml</code>:</p>
+<pre><code>deploy:
+  provider: script
+  script: bin/sanx.github.io-deploy.sh
+  on:
+    branch: master
+</code></pre><p>Create file <code>bin/sanx.github.io-deploy.sh</code>:</p>
+<pre><code>#!/usr/bin/env bash
+
+DIR=&quot;$( cd &quot;$( dirname &quot;${BASH_SOURCE[0]}&quot; )&quot; &amp;&amp; pwd )&quot;
+
+npm install
+node index.js
+
+rm -rf sanx.github.io
+mkdir -p sanx.github.io || { echo &quot;fail&quot;; exit 1; }
+cd sanx.github.io || { echo &quot;fail&quot;; exit 1; }
+printf &quot;Host github.com \n IdentityFile $DIR/../sanx.github.io.travis\n&quot; &gt;&gt; ~/.ssh/config
+git clone git@github.com:sanx/sanx.github.io.git .
+
+cp -r ../_site/* .
+git commit -m &quot;auto commit at: `date`&quot; -a
+git push
+</code></pre><p>Last steps before trying it all on the Travis server:</p>
+<ul>
+<li><code>git add sanx.github.io.travis.enc</code> important <em>not</em> to add the unencrypted private key!</li>
+<li><code>git add .travis.yml</code></li>
+<li><code>git add bin/sanx.github.io-deploy.sh</code></li>
+</ul>
+<p>Ta-da! I should be all set for my blog&#39;s static html pages to be re-generated
+by Metalsmith running on Travis on every commit that I push to my blog sources repo.</p>
+
+                            </div>
+                        </article>
+                    </section>
+                </li>
+            
+                <li>
+                    <section class="post">
+                        <article>
                             <h2><a href="/posts/moved-blog-to-metalsmith-io/index.html#main-start">Moved blog to Metalsmith.io</a></h2>
                             <div>
                                 <p>Finally a blog I can call my own! I can now say that I understand the inner
@@ -242,34 +307,6 @@ with a &quot;Reply-To&quot; header if you want. I don&#39;t really care too much
 just want the receiving part to work, and later on I can reply to emails that
 matter to me using my real email address.</p>
 
-                            </div>
-                        </article>
-                    </section>
-                </li>
-            
-                <li>
-                    <section class="post">
-                        <article>
-                            <h2><a href="/posts/vim-settings-missing-in-osx/index.html#main-start">Vim settings missing in OSX</a></h2>
-                            <div>
-                                <p>I got my new laptop (a 13&#39;&#39; rMBP). Once I started using it, I started noticing
-there are a few default settings that an <em>Ubuntu</em> install of <code>vim</code> has that 
-were missing in <em>OSX</em> (Mavericks). Here are the few that I&#39;ve added to my
-<code>~/.vimrc</code> so far that I&#39;ve found useful:</p>
-<pre><code>set ruler
-filetype plugin indent on
-syntax on
-</code></pre><p>... and some additional settings to have tabs and shifts be automatically
-converted to 4 spaces:</p>
-<pre><code>set expandtab
-set shiftwidth=4
-set tabstop=4
-set softtabstop=4
-</code></pre><p>... and finally, I enable modelines, since I like to use them on my source
-files and to support them when opening others&#39; files:</p>
-<pre><code>set modeline
-set modelines=5
-</code></pre>
                             </div>
                         </article>
                     </section>
