@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Gerardo's musings]]></title><description><![CDATA[Gerardo's musings]]></description><link>http://www.gerardomoad.com/</link><generator>metalsmith-feed</generator><lastBuildDate>Mon, 22 Feb 2016 06:28:11 GMT</lastBuildDate><atom:link href="http://www.gerardomoad.com/rss.xml" rel="self" type="application/rss+xml"/><author><![CDATA[Gerardo Moad]]></author><item><title><![CDATA[Deploying my Metalsmith-generated, Github-Pages-hosted personal blog from the comfort of `git push`]]></title><description><![CDATA[<p>I&#39;m setting up <a href="https://travis-ci.org">Travis</a> to automatically deploy my Metalsmith-generated blog files.</p>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Gerardo's musings]]></title><description><![CDATA[Gerardo's musings]]></description><link>http://www.gerardomoad.com/</link><generator>metalsmith-feed</generator><lastBuildDate>Mon, 22 Feb 2016 06:28:14 GMT</lastBuildDate><atom:link href="http://www.gerardomoad.com/rss.xml" rel="self" type="application/rss+xml"/><author><![CDATA[Gerardo Moad]]></author><item><title><![CDATA[Deploying my Metalsmith-generated, Github-Pages-hosted personal blog from the comfort of `git push`]]></title><description><![CDATA[<p>I&#39;m setting up <a href="https://travis-ci.org">Travis</a> to automatically deploy my Metalsmith-generated blog files.</p>
 <ul>
 <li>My blog sources (Markdown and Metalsmith scripts to pregenerate html) repo are at:
 <a href="https://github.com/sanx/sanx-blog-source">sanx/sanx-blog-source</a> (master branch)</li>
@@ -226,7 +226,24 @@ your server for sending email, and to use your webmail or similar client
 with a &quot;Reply-To&quot; header if you want. I don&#39;t really care too much since I
 just want the receiving part to work, and later on I can reply to emails that
 matter to me using my real email address.</p>
-]]></description><link>http://www.gerardomoad.com/posts/receiving-and-relaying-email-for-my-domains-over-to-free-webmail-accounts</link><guid isPermaLink="true">http://www.gerardomoad.com/posts/receiving-and-relaying-email-for-my-domains-over-to-free-webmail-accounts</guid><dc:creator><![CDATA[Gerardo Moad]]></dc:creator><pubDate>Wed, 23 Jul 2014 00:00:00 GMT</pubDate></item><item><title><![CDATA[Ruby/Jekyll/Github Pages/OSX madness!]]></title><description><![CDATA[<p>Trying to get my Jekyll blog setup locally on my new Mac, I&#39;ve been following
+]]></description><link>http://www.gerardomoad.com/posts/receiving-and-relaying-email-for-my-domains-over-to-free-webmail-accounts</link><guid isPermaLink="true">http://www.gerardomoad.com/posts/receiving-and-relaying-email-for-my-domains-over-to-free-webmail-accounts</guid><dc:creator><![CDATA[Gerardo Moad]]></dc:creator><pubDate>Wed, 23 Jul 2014 00:00:00 GMT</pubDate></item><item><title><![CDATA[Vim settings missing in OSX]]></title><description><![CDATA[<p>I got my new laptop (a 13&#39;&#39; rMBP). Once I started using it, I started noticing
+there are a few default settings that an <em>Ubuntu</em> install of <code>vim</code> has that 
+were missing in <em>OSX</em> (Mavericks). Here are the few that I&#39;ve added to my
+<code>~/.vimrc</code> so far that I&#39;ve found useful:</p>
+<pre><code>set ruler
+filetype plugin indent on
+syntax on
+</code></pre><p>... and some additional settings to have tabs and shifts be automatically
+converted to 4 spaces:</p>
+<pre><code>set expandtab
+set shiftwidth=4
+set tabstop=4
+set softtabstop=4
+</code></pre><p>... and finally, I enable modelines, since I like to use them on my source
+files and to support them when opening others&#39; files:</p>
+<pre><code>set modeline
+set modelines=5
+</code></pre>]]></description><link>http://www.gerardomoad.com/posts/vim-settings-missing-in-osx</link><guid isPermaLink="true">http://www.gerardomoad.com/posts/vim-settings-missing-in-osx</guid><dc:creator><![CDATA[Gerardo Moad]]></dc:creator><pubDate>Wed, 21 May 2014 00:00:00 GMT</pubDate></item><item><title><![CDATA[Ruby/Jekyll/Github Pages/OSX madness!]]></title><description><![CDATA[<p>Trying to get my Jekyll blog setup locally on my new Mac, I&#39;ve been following
 these steps, and encountering the following issues:</p>
 <p>I remembered that I would need to use <code>bundle</code> to launch my Jekyll instance
 in order for it to work the same way as it does on the hosted Github Pages, so I
@@ -283,24 +300,7 @@ on my system. After some investigation, I finally got it working and contributed
 on <a href="http://stackoverflow.com/a/23795873/1369119">here</a>. Damn, it feels good to be a gangster!</p>
 <p>Now, I&#39;m able to run <code>bundle exec jekyll serve</code> on my Mac locally, and it fires
 up an instance of my <strong>Github Pages</strong>/<strong>Jekyll</strong> blog on port 4000.</p>
-]]></description><link>http://www.gerardomoad.com/posts/ruby-jekyll-github-pages-osx-madness</link><guid isPermaLink="true">http://www.gerardomoad.com/posts/ruby-jekyll-github-pages-osx-madness</guid><dc:creator><![CDATA[Gerardo Moad]]></dc:creator><pubDate>Wed, 21 May 2014 00:00:00 GMT</pubDate></item><item><title><![CDATA[Vim settings missing in OSX]]></title><description><![CDATA[<p>I got my new laptop (a 13&#39;&#39; rMBP). Once I started using it, I started noticing
-there are a few default settings that an <em>Ubuntu</em> install of <code>vim</code> has that 
-were missing in <em>OSX</em> (Mavericks). Here are the few that I&#39;ve added to my
-<code>~/.vimrc</code> so far that I&#39;ve found useful:</p>
-<pre><code>set ruler
-filetype plugin indent on
-syntax on
-</code></pre><p>... and some additional settings to have tabs and shifts be automatically
-converted to 4 spaces:</p>
-<pre><code>set expandtab
-set shiftwidth=4
-set tabstop=4
-set softtabstop=4
-</code></pre><p>... and finally, I enable modelines, since I like to use them on my source
-files and to support them when opening others&#39; files:</p>
-<pre><code>set modeline
-set modelines=5
-</code></pre>]]></description><link>http://www.gerardomoad.com/posts/vim-settings-missing-in-osx</link><guid isPermaLink="true">http://www.gerardomoad.com/posts/vim-settings-missing-in-osx</guid><dc:creator><![CDATA[Gerardo Moad]]></dc:creator><pubDate>Wed, 21 May 2014 00:00:00 GMT</pubDate></item><item><title><![CDATA[More tweaks to my Jekyll blog]]></title><description><![CDATA[<p>I&#39;ve made my Jekyll blog a little better (closer to having proper blog features)
+]]></description><link>http://www.gerardomoad.com/posts/ruby-jekyll-github-pages-osx-madness</link><guid isPermaLink="true">http://www.gerardomoad.com/posts/ruby-jekyll-github-pages-osx-madness</guid><dc:creator><![CDATA[Gerardo Moad]]></dc:creator><pubDate>Wed, 21 May 2014 00:00:00 GMT</pubDate></item><item><title><![CDATA[More tweaks to my Jekyll blog]]></title><description><![CDATA[<p>I&#39;ve made my Jekyll blog a little better (closer to having proper blog features)
 by doing the following:</p>
 <ol>
 <li>I fixed the pagination by using the code found at the bottom of the <a href="http://jekyllrb.com/docs/pagination/">Jekyll
