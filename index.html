@@ -69,8 +69,9 @@ to write just to this one repository.</li>
 <li>Check that <code>travis -v</code> is <code>1.7.0</code> or later.</li>
 <li><code>travis init</code> (since I didn&#39;t have a <code>.travis.yml</code> already)</li>
 <li><code>travis login</code></li>
-<li><code>travis encrypt-file sanx.github.io.travis --add</code> will generate <code>travis encrypt-file sanx.github.io.travis.enc</code>
-and modify <code>.travis.yml</code> to make the encryption key available to our build.</li>
+<li><code>travis encrypt-file sanx.github.io.travis --add</code> will generate file <code>sanx.github.io.travis.enc</code>
+and it will also modify your <code>.travis.yml</code> file to make the encryption key available to our build when
+it runs on one of the Travis build servers.</li>
 </ul>
 <p>Add this to <code>.travis.yml</code>:</p>
 <pre><code>before_install:
